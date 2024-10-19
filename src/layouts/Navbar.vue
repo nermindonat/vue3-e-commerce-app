@@ -6,7 +6,7 @@
       <li>
         <a href="" class="flex items-center">
           <img
-            src="../assets/images/elektronik.webp"
+            src="../assets/images/electronic.webp"
             alt=""
             class="w-10 h-10 mr-2"
           />
@@ -15,26 +15,34 @@
       </li>
       <li>
         <a href="" class="flex items-center">
-          <img src="../assets/images/yasam.jpg" alt="" class="w-10 h-10 mr-2" />
+          <img
+            src="../assets/images/home_and_life.jpg"
+            alt=""
+            class="w-10 h-10 mr-2"
+          />
           <span>Ev ve Yaşam</span>
         </a>
       </li>
       <li>
         <a href="" class="flex items-center">
-          <img src="../assets/images/anne.jpg" alt="" class="w-10 h-10 mr-2" />
+          <img
+            src="../assets/images/mother.jpg"
+            alt=""
+            class="w-10 h-10 mr-2"
+          />
           <span>Anne</span>
         </a>
       </li>
       <li>
         <a href="" class="flex items-center">
-          <img src="../assets/images/bebek.jpg" alt="" class="w-10 h-10 mr-2" />
+          <img src="../assets/images/baby.jpg" alt="" class="w-10 h-10 mr-2" />
           <span>Bebek</span>
         </a>
       </li>
       <li>
         <a href="" class="flex items-center">
           <img
-            src="../assets//images/çocuk.jpg"
+            src="../assets//images/child.jpg"
             alt=""
             class="w-10 h-10 mr-2"
           />
@@ -43,14 +51,14 @@
       </li>
       <li>
         <a href="" class="flex items-center">
-          <img src="../assets/images/erkek.jpg" alt="" class="w-10 h-10 mr-2" />
+          <img src="../assets/images/male.jpg" alt="" class="w-10 h-10 mr-2" />
           <span>Erkek</span>
         </a>
       </li>
       <li>
         <a href="" class="flex items-center">
           <img
-            src="../assets/images/kozmetik.jpg"
+            src="../assets/images/cosmetic.jpg"
             alt=""
             class="w-10 h-10 mr-2"
           />
@@ -59,7 +67,7 @@
       </li>
       <li>
         <a href="" class="flex items-center">
-          <img src="../assets/images/spor.jpg" alt="" class="w-10 h-10 mr-2" />
+          <img src="../assets/images/sport.jpg" alt="" class="w-10 h-10 mr-2" />
           <span>Spor</span>
         </a>
       </li>

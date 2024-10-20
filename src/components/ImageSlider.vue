@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative w-3/4 min-h-[400px] mx-auto overflow-hidden mt-5 rounded-md border border-gray-300"
+    class="relative w-3/4 h-[400px] mx-auto overflow-hidden mt-5 rounded-md border border-gray-300"
   >
     <div
       class="flex transition-transform duration-500 ease-in-out"
@@ -9,9 +9,9 @@
       <div
         v-for="(image, index) in images"
         :key="index"
-        class="w-full h-full flex-shrink-0 flex items-center justify-center"
+        class="w-full h-full flex-shrink-0"
       >
-        <img :src="image" alt="Slider" class="w-full h-[400px] object-cover" />
+        <img :src="image" alt="Slider" class="w-full h-[400px]" />
       </div>
     </div>
     <button

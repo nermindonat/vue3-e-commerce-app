@@ -1,7 +1,7 @@
 <template>
   <nav>
     <ul
-      class="max-w-full flex flex-row items-center justify-between py-2 px-20 bg-[#F5F5F5FF] border-b border-gray-300 shadow-md font-semibold"
+      class="max-w-full flex flex-row items-center justify-between py-2 px-20 mt-20 bg-[#F5F5F5FF] border-b border-gray-300 shadow-md font-semibold"
     >
       <li>
         <a href="" class="flex items-center">

@@ -32,6 +32,7 @@ const router = createRouter({
 });
 
 router.afterEach(() => {
+  // Her yönlendirmeden sonra sayfanın en başına kaydırılmayı sağlar.
   window.scrollTo(0, 0);
 });
 

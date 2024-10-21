@@ -36,13 +36,14 @@
 
 <script setup lang="ts">
 import * as yup from "yup";
-import axios from "axios";
 import Input from "../components/Input.vue";
 import Button from "../components/Button.vue";
 import { useField, useForm } from "vee-validate";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "../stores/auth";
 
 const router = useRouter();
+const authStore = useAuthStore();
 
 const validationSchema = yup.object({
   email: yup.string().required("E-posta alanı zorunludur"),
@@ -55,19 +56,10 @@ const { value: password, errorMessage: passwordError } = useField("email");
 
 const submitHandler = form.handleSubmit(async (values) => {
   try {
-    const response = await axios.post(
-      `${import.meta.env.VITE_API_BASE_URL}/auth/login`,
-      {
-        email: values.email,
-        password: values.password,
-      }
-    );
-    if (response) {
-      console.log(response.data);
-      router.push("/");
-    }
+    await authStore.login(values.email, values.password);
+    router.push("/");
   } catch (error) {
-    console.error("From gönderilirken hata oluştu.", error);
+    console.error("Giriş yaparken bir hata oluştu.", error);
   }
 });
 </script>

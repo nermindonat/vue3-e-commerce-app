@@ -9,6 +9,12 @@
         Giriş Yap
       </h2>
       <form @submit.prevent="submitHandler">
+        <div
+          v-if="showErrorMessage"
+          class="text-[#d0021b] leading-[15px] p-[14px_20px_13px] mb-4 flex items-center border border-[#817274] rounded-sm bg-[#fff4f6]"
+        >
+          E-posta adresiniz veya şifreniz hatalı.
+        </div>
         <div class="grid w-full grid-cols-1 md:grid-cols-1 gap-4">
           <Input
             name="email"
@@ -41,9 +47,11 @@ import Button from "../components/Button.vue";
 import { useField, useForm } from "vee-validate";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../stores/auth";
+import { ref } from "vue";
 
 const router = useRouter();
 const authStore = useAuthStore();
+const showErrorMessage = ref(false);
 
 const validationSchema = yup.object({
   email: yup.string().required("E-posta alanı zorunludur"),
@@ -59,6 +67,7 @@ const submitHandler = form.handleSubmit(async (values) => {
     await authStore.login(values.email, values.password);
     router.push("/");
   } catch (error) {
+    showErrorMessage.value = true;
     console.error("Giriş yaparken bir hata oluştu.", error);
   }
 });

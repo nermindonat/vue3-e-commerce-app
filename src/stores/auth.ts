@@ -1,14 +1,19 @@
 import { defineStore } from "pinia";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import axios from "axios";
-import { useUsersStore } from "./users";
+
+interface User {
+  name: string;
+  surname: string;
+  email: string;
+}
 
 export const useAuthStore = defineStore("authStore", () => {
-  const userStore = useUsersStore();
-  const isAuth = computed(() => !!userStore.user);
+  const user = ref<User | null>(null);
+  const isAuth = computed(() => !!user.value);
 
-  function setAuth(user: any, token: string) {
-    userStore.user = user;
+  function setAuth(userInfo: User, token: string) {
+    user.value = userInfo;
     localStorage.setItem("access_token", token);
   }
 
@@ -24,16 +29,10 @@ export const useAuthStore = defineStore("authStore", () => {
       const token = response.data.token;
 
       if (token) {
-        const userInfoDetail = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/user/user-detail`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        userStore.user = userInfoDetail.data;
-        setAuth(userInfoDetail.data, token);
+        await fetchUserInfo(token);
+        if (user.value) {
+          setAuth(user.value, token);
+        }
       }
       return response.data;
     } catch (error) {
@@ -42,9 +41,40 @@ export const useAuthStore = defineStore("authStore", () => {
     }
   }
 
+  async function fetchUserInfo(token: string) {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/user/user-detail`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      user.value = response.data;
+    } catch (error) {
+      console.error("Kullanıcı bilgilerini alırken hata oluştu:", error);
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem("access_token");
+    user.value = null;
+  }
+
+  function checkAuth() {
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      fetchUserInfo(token);
+    }
+  }
+
   return {
     isAuth,
+    user,
     login,
     setAuth,
+    logout,
+    checkAuth,
   };
 });

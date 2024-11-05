@@ -22,4 +22,9 @@ export const useUsersStore = defineStore("userStore", {
       }
     },
   },
+  getters: {
+    getUsers(state) {
+      return state.user;
+    },
+  },
 });

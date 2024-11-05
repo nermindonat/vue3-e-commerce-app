@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ImageSlider />
+    <!-- <ImageSlider /> -->
     <div
       v-if="products.length > 0"
       class="w-full mx-auto overflow-hidden my-5 px-10 py-5"
@@ -37,7 +37,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import axios from "axios";
-import ImageSlider from "../components/ImageSlider.vue";
+// import ImageSlider from "../components/ImageSlider.vue";
 
 interface Product {
   id: number;

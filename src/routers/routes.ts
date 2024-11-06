@@ -7,22 +7,52 @@ import {
 import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
+import MyOrders from "../views/MyOrders.vue";
+import MyReviews from "../views/MyReviews.vue";
+import MyDiscountCoupons from "../views/MyDiscountCoupons.vue";
+import MyUserInformation from "../views/MyUserInformation.vue";
+import ProductDetail from "../views/products/ProductDetail.vue";
 
 const routes: RouteRecordRaw[] = [
   {
     path: "/",
-    name: "home",
+    name: "Home",
     component: Home,
   },
   {
     path: "/giris-yap",
-    name: "login",
+    name: "Login",
     component: Login,
   },
   {
     path: "/uye-ol",
-    name: "register",
+    name: "Register",
     component: Register,
+  },
+  {
+    path: "/siparislerim",
+    name: "Orders",
+    component: MyOrders,
+  },
+  {
+    path: "/degerlendirmelerim",
+    name: "Reviews",
+    component: MyReviews,
+  },
+  {
+    path: "/indirim-kuponlarim",
+    name: "Discount Coupons",
+    component: MyDiscountCoupons,
+  },
+  {
+    path: "/kullanici-bilgilerim",
+    name: "User Information",
+    component: MyUserInformation,
+  },
+  {
+    path: "/product-detail",
+    name: "Product Detail",
+    component: ProductDetail,
   },
 ];
 
@@ -32,7 +62,6 @@ const router = createRouter({
 });
 
 router.afterEach(() => {
-  // Her yönlendirmeden sonra sayfanın en başına kaydırılmayı sağlar.
   window.scrollTo(0, 0);
 });
 

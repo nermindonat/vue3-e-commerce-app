@@ -14,7 +14,7 @@
         </h2>
       </a>
       <div class="flex-grow flex justify-center">
-        <SearchInput placeholder="Ürün ara" modelValue="search" />
+        <SearchInput placeholder="Ürün, kategori. marka ara" modelValue="" />
       </div>
     </div>
     <div class="w-1/4 flex items-center justify-between">
@@ -29,46 +29,69 @@
           <span class="text-sm"
             >{{ authStore.user?.name }} {{ authStore.user?.surname }}</span
           >
-
           <div
             v-if="showDropdown"
-            class="absolute flex flex-col bg-white shadow-md p-4 rounded mt-10 cursor-pointer"
+            class="absolute flex flex-col bg-white shadow-md border border-gray-300 rounded-lg p-4 mt-10 cursor-pointer"
             @mouseleave="showDropdown = false"
+            style="top: 20%; left: 50%; transform: translateX(-50%)"
           >
+            <div
+              class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-full"
+              style="
+                width: 0;
+                height: 0;
+                border-left: 8px solid transparent;
+                border-right: 8px solid transparent;
+                border-bottom: 8px solid white;
+                filter: drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.1));
+              "
+            ></div>
             <p class="text-red-400 mb-2 border-b-2 pb-2">
               {{ authStore.user?.email }}
             </p>
             <div class="flex flex-row items-center mb-2">
               <Icon icon="lsicon:order-outline" />
-              <a href="/siparisler" class="block text-xs py-1 ml-2"
-                >Siparişlerim</a
+              <router-link
+                to="/siparislerim"
+                class="block text-xs py-1 ml-2"
+                @click="showDropdown = false"
+                >Siparişlerim</router-link
               >
             </div>
             <div class="flex flex-row items-center mb-2">
               <Icon icon="mingcute:comment-line" />
-              <a href="/degerlendirme" class="block text-xs py-1 ml-2"
-                >Değerlendirmelerim</a
+              <router-link
+                to="/degerlendirmelerim"
+                class="block text-xs py-1 ml-2"
+                @click="showDropdown = false"
+                >Değerlendirmelerim</router-link
               >
             </div>
             <div class="flex flex-row items-center mb-2">
               <Icon icon="ic:outline-discount" />
-              <a href="/indirim-kuponlarim" class="block text-xs py-1 ml-2"
-                >İndirim Kuponlarım</a
+              <router-link
+                to="/indirim-kuponlarim"
+                class="block text-xs py-1 ml-2"
+                @click="showDropdown = false"
+                >İndirim Kuponlarım</router-link
               >
             </div>
             <div class="flex flex-row items-center mb-2">
               <Icon icon="tdesign:user" />
-              <a href="/kullanici-bilgilerim" class="block text-xs py-1 ml-2"
-                >Kullanıcı Bilgilerim</a
+              <router-link
+                to="/kullanici-bilgilerim"
+                class="block text-xs py-1 ml-2"
+                @click="showDropdown = false"
+                >Kullanıcı Bilgilerim</router-link
               >
             </div>
             <div class="flex flex-row items-center">
               <Icon icon="ic:baseline-logout" />
-              <a
-                href="/"
+              <router-link
+                to="/"
                 @click.prevent="logout"
                 class="block text-xs py-1 ml-2"
-                >Çıkış Yap</a
+                >Çıkış Yap</router-link
               >
             </div>
           </div>
@@ -104,7 +127,7 @@
 import { Icon } from "@iconify/vue";
 import SearchInput from "../components/SearchInput.vue";
 import { useAuthStore } from "../stores/auth";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 
 const authStore = useAuthStore();
 const showDropdown = ref(false);
@@ -112,6 +135,15 @@ const showDropdown = ref(false);
 const logout = () => {
   authStore.logout();
 };
+
+watch(
+  () => authStore.isAuth,
+  (newVal) => {
+    if (newVal) {
+      showDropdown.value = false;
+    }
+  }
+);
 
 onMounted(() => {
   authStore.checkAuth();

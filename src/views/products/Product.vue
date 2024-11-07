@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-if="products.length > 0"
-    class="w-full mx-auto overflow-hidden my-5 px-10 py-5"
-  >
+  <div class="w-full mx-auto overflow-hidden my-5 px-10 py-5">
     <div class="mb-4 font-semibold text-xl">
       <h2>Popüler Ürünler</h2>
     </div>
@@ -10,10 +7,11 @@
       class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4"
     >
       <router-link
-        to="/product-detail"
-        v-for="product in products"
+        :to="`/urun/${urlFormat(product.name)}`"
+        v-for="product in productStore.products"
         :key="product.id"
         class="h-[400px] bg-gray-100 border rounded-lg shadow"
+        @click="setSelectedProduct(product.id)"
       >
         <div class="w-full h-[300px]">
           <img
@@ -32,35 +30,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import axios from "axios";
+import { onMounted } from "vue";
+import { useProductsStore } from "../../stores/products";
+import { urlFormat } from "../../utils/formatters";
+import { getImageUrl } from "../../utils/imageUtils";
 
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
-}
+const productStore = useProductsStore();
 
-const products = ref<Product[]>([]);
-
-const fetchAllProduct = async () => {
-  try {
-    const response = await axios.get(
-      `${import.meta.env.VITE_API_BASE_URL}/product`
-    );
-    products.value = response.data;
-  } catch (error) {
-    console.error("Bir sorun oluştu.", error);
-  }
-};
-const getImageUrl = (imagePath: string) => {
-  return `${import.meta.env.VITE_API_BASE_URL}/${
-    import.meta.env.VITE_IMG_FOLDER_NAME
-  }/${imagePath}`;
+const setSelectedProduct = (id: number) => {
+  productStore.selectedProductId = id;
+  productStore.fetchProductById(id);
 };
 
 onMounted(() => {
-  fetchAllProduct();
+  productStore.fetchAllProducts();
 });
 </script>

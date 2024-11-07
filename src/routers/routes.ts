@@ -50,7 +50,7 @@ const routes: RouteRecordRaw[] = [
     component: MyUserInformation,
   },
   {
-    path: "/product-detail",
+    path: "/urun/:name",
     name: "Product Detail",
     component: ProductDetail,
   },

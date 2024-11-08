@@ -1,16 +1,16 @@
 <template>
   <section class="text-gray-700 body-font overflow-hidden bg-white">
     <div class="container px-5 py-24 mx-auto">
-      <div v-if="productDetail" class="lg:w-4/5 mx-auto flex flex-wrap">
+      <div
+        v-if="productDetail"
+        class="lg:w-4/5 mx-auto flex flex-wrap justify-center"
+      >
         <img
           :src="getImageUrl(productDetail.image)"
           alt="img"
-          class="lg:w-1/2 w-full object-cover object-center rounded border border-gray-200"
+          class="lg:w-1/2 w-full max-w-[300px] h-[400px] object-cover object-center rounded border border-gray-200"
         />
         <div class="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
-          <h2 class="text-sm title-font text-gray-500 tracking-widest">
-            ÜRÜN ADI
-          </h2>
           <h1 class="text-gray-900 text-3xl title-font font-medium mb-1">
             {{ productDetail.name }}
           </h1>
@@ -22,7 +22,7 @@
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                class="w-4 h-4 text-red-500"
+                class="w-4 h-4 text-[#FEC612FF]"
                 viewBox="0 0 24 24"
               >
                 <path
@@ -35,7 +35,7 @@
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                class="w-4 h-4 text-red-500"
+                class="w-4 h-4 text-[#FEC612FF]"
                 viewBox="0 0 24 24"
               >
                 <path
@@ -48,7 +48,7 @@
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                class="w-4 h-4 text-red-500"
+                class="w-4 h-4 text-[#FEC612FF]"
                 viewBox="0 0 24 24"
               >
                 <path
@@ -61,7 +61,7 @@
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                class="w-4 h-4 text-red-500"
+                class="w-4 h-4 text-[#FEC612FF]"
                 viewBox="0 0 24 24"
               >
                 <path
@@ -74,14 +74,14 @@
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                class="w-4 h-4 text-red-500"
+                class="w-4 h-4 text-[#FEC612FF]"
                 viewBox="0 0 24 24"
               >
                 <path
                   d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
                 ></path>
               </svg>
-              <span class="text-gray-600 ml-3">4 Reviews</span>
+              <span class="text-gray-600 ml-3">4 Değerlendirme</span>
             </span>
             <span class="flex ml-3 pl-3 py-2 border-l-2 border-gray-200">
               <a class="text-gray-500">
@@ -129,17 +129,17 @@
             </span>
           </div>
           <p class="leading-relaxed">
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-            Repellendus nulla vitae labore reiciendis ipsam. Ratione ab ea nemo,
-            aperiam soluta accusamus? Corrupti, pariatur! Magnam, et facere
-            dolorum porro blanditiis veritatis nam nihil aliquam maiores modi?
-            Sapiente, quisquam voluptatum! Laudantium, libero?
+            {{
+              productDetail.description
+                ? productDetail.description
+                : "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellendus nulla vitae labore reiciendis ipsam. Ratione ab ea nemo, aperiam soluta accusamus? Corrupti, pariatur! Magnam, et facere dolorum porro blanditiis veritatis nam nihil aliquam maiores modi? Sapiente, quisquam voluptatum! Laudantium, libero"
+            }}
           </p>
           <div
             class="flex mt-6 items-center pb-5 border-b-2 border-gray-200 mb-5"
           >
             <div class="flex">
-              <span class="mr-3">Color</span>
+              <span class="mr-3">Renk</span>
               <button
                 class="border-2 border-gray-300 rounded-full w-6 h-6 focus:outline-none"
               ></button>
@@ -151,7 +151,7 @@
               ></button>
             </div>
             <div class="flex ml-6 items-center">
-              <span class="mr-3">Size</span>
+              <span class="mr-3">Beden</span>
               <div class="relative">
                 <select
                   class="rounded border appearance-none border-gray-400 py-2 focus:outline-none focus:border-red-500 text-base pl-3 pr-10"
@@ -185,7 +185,7 @@
               {{ productDetail.price }} TL
             </span>
             <button
-              class="flex ml-auto text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded"
+              class="flex ml-auto text-white bg-[#F27A1AFF] border-0 py-2 px-6 focus:outline-none hover:bg-orange-400 rounded"
             >
               Sepete Ekle
             </button>

@@ -111,6 +111,11 @@
           class="w-[1.2em] h-[1.2em] mr-1"
         />
         <a href="">Favorilerim</a>
+        <div
+          class="bg-[#f27a1a] text-white text-[11px] w-4 h-4 leading-[16px] text-center ml-[3px] mt-[2px] rounded-full z-10"
+        >
+          2
+        </div>
       </div>
       <div class="flex items-center font-semibold">
         <Icon
@@ -118,6 +123,11 @@
           class="w-[1.2em] h-[1.2em] mr-1"
         />
         <a href="">Sepetim</a>
+        <div
+          class="bg-[#f27a1a] text-white text-[11px] w-4 h-4 leading-[16px] text-center ml-[3px] mt-[2px] rounded-full z-10"
+        >
+          1
+        </div>
       </div>
     </div>
   </header>

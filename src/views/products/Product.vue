@@ -10,20 +10,22 @@
         :to="`/urun/${urlFormat(product.name)}`"
         v-for="product in productStore.products"
         :key="product.id"
-        class="h-[400px] bg-gray-100 border rounded-lg shadow"
+        class="h-[400px] bg-gray-100 border rounded-lg shadow flex flex-col justify-between"
         @click="setSelectedProduct(product.id)"
       >
-        <div class="w-full h-[300px]">
-          <img
-            :src="getImageUrl(product.image)"
-            alt="Product"
-            class="w-full h-full object-cover rounded-t-lg"
-          />
+        <div>
+          <div class="w-full h-[300px]">
+            <img
+              :src="getImageUrl(product.image)"
+              alt="Product"
+              class="w-full h-full object-cover rounded-t-lg"
+            />
+          </div>
+          <div class="m-2">
+            <h2 class="line-clamp">{{ product.name }}</h2>
+          </div>
         </div>
-        <div class="flex flex-col m-2 items-start">
-          <h2>{{ product.name }}</h2>
-          <span class="mt-5 font-semibold">{{ product.price }} TL</span>
-        </div>
+        <span class="m-2 font-semibold mt-auto">{{ product.price }} TL</span>
       </router-link>
     </div>
   </div>
@@ -46,3 +48,13 @@ onMounted(() => {
   productStore.fetchAllProducts();
 });
 </script>
+
+<style>
+.line-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+</style>

@@ -132,50 +132,48 @@
             {{
               productDetail.description
                 ? productDetail.description
-                : "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellendus nulla vitae labore reiciendis ipsam. Ratione ab ea nemo, aperiam soluta accusamus? Corrupti, pariatur! Magnam, et facere dolorum porro blanditiis veritatis nam nihil aliquam maiores modi? Sapiente, quisquam voluptatum! Laudantium, libero"
+                : "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellendus nulla vitae labore reiciendis ipsam. Ratione ab ea nemo, aperiam soluta accusamus? Corrupti, pariatur!"
             }}
           </p>
-          <div
-            class="flex mt-6 items-center pb-5 border-b-2 border-gray-200 mb-5"
-          >
-            <div class="flex">
-              <span class="mr-3">Renk</span>
-              <button
-                class="border-2 border-gray-300 rounded-full w-6 h-6 focus:outline-none"
-              ></button>
-              <button
-                class="border-2 border-gray-300 ml-1 bg-gray-700 rounded-full w-6 h-6 focus:outline-none"
-              ></button>
-              <button
-                class="border-2 border-gray-300 ml-1 bg-red-500 rounded-full w-6 h-6 focus:outline-none"
-              ></button>
+          <div class="flex flex-col mt-6 pb-5 border-b-2 border-gray-200 mb-5">
+            <div v-if="colors.length > 0" class="flex flex-col mb-2">
+              <span class="mr-3 font-semibold mb-2">Renk:</span>
+              <div class="flex flex-row items-center">
+                <button
+                  v-for="color in colors"
+                  :key="color.id"
+                  :style="{ backgroundColor: color.value }"
+                  class="border-2 border-gray-300 rounded-full w-6 h-6 focus:outline-none mr-2"
+                ></button>
+              </div>
             </div>
-            <div class="flex ml-6 items-center">
-              <span class="mr-3">Beden</span>
-              <div class="relative">
-                <select
-                  class="rounded border appearance-none border-gray-400 py-2 focus:outline-none focus:border-red-500 text-base pl-3 pr-10"
-                >
-                  <option>SM</option>
-                  <option>M</option>
-                  <option>L</option>
-                  <option>XL</option>
-                </select>
-                <span
-                  class="absolute right-0 top-0 h-full w-10 text-center text-gray-600 pointer-events-none flex items-center justify-center"
-                >
-                  <svg
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    class="w-4 h-4"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M6 9l6 6 6-6"></path>
-                  </svg>
-                </span>
+            <div v-if="sizes.length > 0" class="flex flex-col">
+              <span class="mr-3 mb-2 font-semibold"
+                >Beden: {{ selectedSize }}</span
+              >
+              <div class="flex flex-row items-center">
+                <div v-for="size in sizes" :key="size.id" class="mb-2 mr-2">
+                  <input
+                    type="text"
+                    :value="size.value"
+                    class="w-12 m-0 mr-2 mb-2 p-2 px-3 rounded border border-gray-400 bg-white text-sm font-semibold tracking-tight text-center text-gray-800 overflow-hidden cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#f27a1a] focus:border-[#f27a1a]"
+                    readonly
+                    @click="setSelectedSize(size.value)"
+                  />
+                </div>
+              </div>
+            </div>
+            <div v-if="rams.length > 0" class="flex flex-col">
+              <span class="mr-3 mb-2 font-semibold">Ram:</span>
+              <div class="flex flex-row items-center">
+                <div v-for="ram in rams" :key="ram.id" class="mb-2 mr-2">
+                  <input
+                    type="text"
+                    :value="ram.value"
+                    class="w-12 m-0 mr-2 mb-2 p-2 px-3 rounded border border-gray-400 bg-white text-sm font-semibold tracking-tight text-center text-gray-800 overflow-hidden"
+                    readonly
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -222,13 +220,33 @@ const productDetail = ref<any>(null);
 
 const selectedProductId = productStore.selectedProductId;
 
+const colors = ref<any[]>([]);
+const sizes = ref<any[]>([]);
+const rams = ref<any[]>([]);
+const selectedSize = ref<string>("");
+
 onMounted(() => {
   if (selectedProductId) {
     productStore
       .fetchProductById(selectedProductId)
       .then(() => {
         productDetail.value = productStore.productDetail;
-        console.log("Detail sayfasına gelen data:", productDetail.value);
+        const variants = productDetail.value.groupedVariants;
+
+        if (variants) {
+          colors.value = (variants["Renk"] || []).map(
+            (value: string, index: number) => ({
+              id: index,
+              value: value,
+            })
+          );
+          sizes.value = (variants["Beden"] || []).map(
+            (value: string, index: number) => ({ id: index, value })
+          );
+          rams.value = (variants["Ram"] || []).map(
+            (value: string, index: number) => ({ id: index, value })
+          );
+        }
       })
       .catch((error) => {
         console.error("Error fetching product:", error);
@@ -237,4 +255,8 @@ onMounted(() => {
     console.error("No selectedProductId found in store!");
   }
 });
+
+const setSelectedSize = (size: string) => {
+  selectedSize.value = size;
+};
 </script>

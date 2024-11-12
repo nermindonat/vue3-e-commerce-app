@@ -164,14 +164,17 @@
               </div>
             </div>
             <div v-if="rams.length > 0" class="flex flex-col">
-              <span class="mr-3 mb-2 font-semibold">Ram:</span>
+              <span class="mr-3 mb-2 font-semibold"
+                >Ram: {{ selectedRam }}</span
+              >
               <div class="flex flex-row items-center">
                 <div v-for="ram in rams" :key="ram.id" class="mb-2 mr-2">
                   <input
                     type="text"
                     :value="ram.value"
-                    class="w-12 m-0 mr-2 mb-2 p-2 px-3 rounded border border-gray-400 bg-white text-sm font-semibold tracking-tight text-center text-gray-800 overflow-hidden"
+                    class="w-12 m-0 mr-2 mb-2 p-2 px-3 rounded border border-gray-400 bg-white text-sm font-semibold tracking-tight text-center text-gray-800 overflow-hidden cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#f27a1a] focus:border-[#f27a1a]"
                     readonly
+                    @click="setSelectedRam(ram.value)"
                   />
                 </div>
               </div>
@@ -188,20 +191,25 @@
               Sepete Ekle
             </button>
             <button
-              class="rounded-full w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500 ml-4"
+              class="relative rounded-full w-10 h-10 p-0 border border-[#e6e6e6] inline-flex items-center justify-center text-gray-500 ml-4 hover:text-[#f27a1a] hover:shadow-lg transition-all duration-200 group"
+              @click="addFavorites"
             >
-              <svg
-                fill="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                class="w-5 h-5"
-                viewBox="0 0 24 24"
+              <Icon
+                icon="mdi:heart"
+                :class="
+                  isFavorite
+                    ? 'text-[#f27a1a]'
+                    : 'text-gray-500 hover:text-[#f27a1a]'
+                "
+                width="1.2em"
+                height="1.2em"
+              />
+              <span
+                class="absolute top-full mt-2 border border-[#e6e6e6] hidden group-hover:block text-[#f27a1a] text-xs rounded py-1 px-2 whitespace-nowrap"
+                style="left: 50%; transform: translateX(-50%)"
               >
-                <path
-                  d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"
-                ></path>
-              </svg>
+                Favorilere ekle
+              </span>
             </button>
           </div>
         </div>
@@ -211,19 +219,32 @@
 </template>
 
 <script setup lang="ts">
+import { Icon } from "@iconify/vue";
 import { onMounted, ref } from "vue";
 import { useProductsStore } from "../../stores/products";
 import { getImageUrl } from "../../utils/imageUtils";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "../../stores/auth";
+import axios from "axios";
 
+const router = useRouter();
+const authStore = useAuthStore();
 const productStore = useProductsStore();
 const productDetail = ref<any>(null);
 
 const selectedProductId = productStore.selectedProductId;
 
-const colors = ref<any[]>([]);
-const sizes = ref<any[]>([]);
-const rams = ref<any[]>([]);
+interface VariantOption {
+  id: number;
+  value: string;
+}
+
+const colors = ref<VariantOption[]>([]);
+const sizes = ref<VariantOption[]>([]);
+const rams = ref<VariantOption[]>([]);
 const selectedSize = ref<string>("");
+const selectedRam = ref<string>("");
+const isFavorite = ref(false);
 
 onMounted(() => {
   if (selectedProductId) {
@@ -258,5 +279,39 @@ onMounted(() => {
 
 const setSelectedSize = (size: string) => {
   selectedSize.value = size;
+};
+
+const setSelectedRam = (ram: string) => {
+  selectedRam.value = ram;
+};
+
+const addFavorites = async () => {
+  if (authStore.isAuth) {
+    try {
+      const productId = productDetail.value.id;
+      const userId = authStore.user?.id;
+      const token = localStorage.getItem("access_token");
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/favorites`,
+        {
+          productId,
+          userId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response) {
+        isFavorite.value = true;
+      }
+    } catch (error) {
+      console.error("Favorilere eklerken hata oluşt.", error);
+    }
+  } else {
+    router.push("/giris-yap");
+  }
 };
 </script>

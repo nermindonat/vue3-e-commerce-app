@@ -3,6 +3,7 @@ import { computed, ref } from "vue";
 import axios from "axios";
 
 interface User {
+  id: number;
   name: string;
   surname: string;
   email: string;

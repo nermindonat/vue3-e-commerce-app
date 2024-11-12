@@ -31,7 +31,7 @@
           >
           <div
             v-if="showDropdown"
-            class="absolute flex flex-col bg-white shadow-md border border-gray-300 rounded-lg p-4 mt-10 cursor-pointer"
+            class="max-w-[170px] absolute flex flex-col bg-white shadow-md border border-gray-300 rounded-lg p-4 mt-10 cursor-pointer"
             @mouseleave="showDropdown = false"
             style="top: 20%; left: 50%; transform: translateX(-50%)"
           >
@@ -46,7 +46,9 @@
                 filter: drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.1));
               "
             ></div>
-            <p class="text-red-400 mb-2 border-b-2 pb-2">
+            <p
+              class="text-red-400 mb-2 border-b-2 pb-2 overflow-hidden whitespace-nowrap text-ellipsis"
+            >
               {{ authStore.user?.email }}
             </p>
             <div class="flex flex-row items-center mb-2">
@@ -110,7 +112,7 @@
           icon="material-symbols:favorite-outline"
           class="w-[1.2em] h-[1.2em] mr-1"
         />
-        <a href="">Favorilerim</a>
+        <a href="" @click="handleFavoritesClick">Favorilerim</a>
         <div
           class="bg-[#f27a1a] text-white text-[11px] w-4 h-4 leading-[16px] text-center ml-[3px] mt-[2px] rounded-full z-10"
         >
@@ -137,13 +139,23 @@
 import { Icon } from "@iconify/vue";
 import SearchInput from "../components/SearchInput.vue";
 import { useAuthStore } from "../stores/auth";
+import { useRouter } from "vue-router";
 import { onMounted, ref, watch } from "vue";
 
+const router = useRouter();
 const authStore = useAuthStore();
 const showDropdown = ref(false);
 
 const logout = () => {
   authStore.logout();
+};
+
+const handleFavoritesClick = () => {
+  if (authStore.isAuth) {
+    router.push("/favorilerim");
+  } else {
+    router.push("/giris-yap");
+  }
 };
 
 watch(

@@ -16,6 +16,7 @@
 -----------------
 
 # Product Detail Page
-![image](https://github.com/user-attachments/assets/2be22af5-b7ef-4f3d-bc4d-f68d2805f2e5)
+![image](https://github.com/user-attachments/assets/8c24860e-ab7b-496b-b7a4-909be66a1a80)
+
 
 

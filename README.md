@@ -18,5 +18,11 @@
 # Product Detail Page
 ![image](https://github.com/user-attachments/assets/8c24860e-ab7b-496b-b7a4-909be66a1a80)
 
+----------------
+
+# Favorite Products Page
+![image](https://github.com/user-attachments/assets/a94f46c2-2c29-4a40-8063-8b9446e970f8)
+
+
 
 

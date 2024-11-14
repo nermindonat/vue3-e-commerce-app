@@ -47,10 +47,12 @@ import Button from "../components/Button.vue";
 import { useField, useForm } from "vee-validate";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../stores/auth";
+import { useFavoritesStore } from "../stores/favorites";
 import { ref } from "vue";
 
 const router = useRouter();
 const authStore = useAuthStore();
+const favoritesStore = useFavoritesStore();
 const showErrorMessage = ref(false);
 
 const validationSchema = yup.object({
@@ -60,12 +62,16 @@ const validationSchema = yup.object({
 
 const form = useForm({ validationSchema });
 const { value: email, errorMessage: emailError } = useField("email");
-const { value: password, errorMessage: passwordError } = useField("email");
+const { value: password, errorMessage: passwordError } = useField("password");
 
 const submitHandler = form.handleSubmit(async (values) => {
   try {
     await authStore.login(values.email, values.password);
     router.push("/");
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      await favoritesStore.fetchFavoriteProducts(token);
+    }
   } catch (error) {
     showErrorMessage.value = true;
     console.error("Giriş yaparken bir hata oluştu.", error);

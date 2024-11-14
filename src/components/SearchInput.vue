@@ -10,11 +10,13 @@
         $emit('update:modelValue', ($event.target as HTMLInputElement).value)
       "
     />
-    <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+    <div
+      class="absolute inset-y-0 right-0 flex items-center pr-3 text-[#f27a1a]"
+    >
       <span
         class="text-xl cursor-pointer material-symbols-rounded"
         @click="$emit('update:modelValue', '')"
-        ><Icon icon="material-symbols-light:search"
+        ><Icon icon="tabler:search"
       /></span>
     </div>
   </div>

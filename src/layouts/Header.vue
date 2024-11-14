@@ -107,16 +107,19 @@
           <!-- <router-link to="/uye-ol">Üye Ol</router-link> -->
         </div>
       </div>
-      <div class="flex items-center font-semibold">
+      <div
+        class="flex flex-row justify-center items-center font-semibold hover:text-[#f27a1a] cursor-pointer"
+      >
         <Icon
           icon="material-symbols:favorite-outline"
           class="w-[1.2em] h-[1.2em] mr-1"
         />
         <a href="" @click="handleFavoritesClick">Favorilerim</a>
         <div
-          class="bg-[#f27a1a] text-white text-[11px] w-4 h-4 leading-[16px] text-center ml-[3px] mt-[2px] rounded-full z-10"
+          v-if="authStore.isAuth && favoriteCount"
+          class="flex items-center justify-center bg-[#f27a1a] text-white text-[11px] w-4 h-4 leading-[16px] text-center ml-[3px] rounded-full z-10"
         >
-          2
+          {{ favoriteCount }}
         </div>
       </div>
       <div class="flex items-center font-semibold">
@@ -126,7 +129,8 @@
         />
         <a href="">Sepetim</a>
         <div
-          class="bg-[#f27a1a] text-white text-[11px] w-4 h-4 leading-[16px] text-center ml-[3px] mt-[2px] rounded-full z-10"
+          v-if="authStore.isAuth"
+          class="bg-[#f27a1a] text-white text-[11px] w-4 h-4 leading-[16px] text-center ml-[3px] rounded-full z-10"
         >
           1
         </div>
@@ -139,16 +143,22 @@
 import { Icon } from "@iconify/vue";
 import SearchInput from "../components/SearchInput.vue";
 import { useAuthStore } from "../stores/auth";
+import { useFavoritesStore } from "../stores/favorites";
 import { useRouter } from "vue-router";
-import { onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 
 const router = useRouter();
 const authStore = useAuthStore();
+const favoritesStore = useFavoritesStore();
 const showDropdown = ref(false);
 
 const logout = () => {
   authStore.logout();
 };
+
+const favoriteCount = computed(() => {
+  return favoritesStore?.favoriteProducts?.length;
+});
 
 const handleFavoritesClick = () => {
   if (authStore.isAuth) {
@@ -167,7 +177,11 @@ watch(
   }
 );
 
-onMounted(() => {
+onMounted(async () => {
   authStore.checkAuth();
+  const token = localStorage.getItem("access_token");
+  if (token) {
+    await favoritesStore.fetchFavoriteProducts(token);
+  }
 });
 </script>

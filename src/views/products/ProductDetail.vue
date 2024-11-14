@@ -10,7 +10,7 @@
           alt="img"
           class="lg:w-1/2 w-full max-w-[300px] h-[400px] object-cover object-center rounded border border-gray-200"
         />
-        <div class="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
+        <div class="lg:w-1/2 w-full lg:pl-10 mt-6 lg:mt-0">
           <h1 class="text-gray-900 text-3xl title-font font-medium mb-1">
             {{ productDetail.name }}
           </h1>
@@ -163,6 +163,22 @@
                 </div>
               </div>
             </div>
+            <div v-if="numbers.length > 0" class="flex flex-col">
+              <span class="mr-3 mb-2 font-semibold"
+                >Numara: {{ selectedNumber }}</span
+              >
+              <div class="flex flex-row items-center">
+                <div v-for="num in numbers" :key="num.id" class="mb-2 mr-2">
+                  <input
+                    type="text"
+                    :value="num.value"
+                    class="w-12 m-0 mr-2 mb-2 p-2 px-3 rounded border border-gray-400 bg-white text-sm font-semibold tracking-tight text-center text-gray-800 overflow-hidden cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#f27a1a] focus:border-[#f27a1a]"
+                    readonly
+                    @click="setSelectedNumber(num.value)"
+                  />
+                </div>
+              </div>
+            </div>
             <div v-if="rams.length > 0" class="flex flex-col">
               <span class="mr-3 mb-2 font-semibold"
                 >Ram: {{ selectedRam }}</span
@@ -208,7 +224,7 @@
                 class="absolute top-full mt-2 border border-[#e6e6e6] hidden group-hover:block text-[#f27a1a] text-xs rounded py-1 px-2 whitespace-nowrap"
                 style="left: 50%; transform: translateX(-50%)"
               >
-                Favorilere ekle
+                {{ isFavorite ? "Favorilere eklendi" : "Favorilere ekle" }}
               </span>
             </button>
           </div>
@@ -220,18 +236,19 @@
 
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useProductsStore } from "../../stores/products";
 import { getImageUrl } from "../../utils/imageUtils";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../../stores/auth";
+import { useFavoritesStore } from "../../stores/favorites";
 import axios from "axios";
 
 const router = useRouter();
 const authStore = useAuthStore();
 const productStore = useProductsStore();
+const favoritesStore = useFavoritesStore();
 const productDetail = ref<any>(null);
-
 const selectedProductId = productStore.selectedProductId;
 
 interface VariantOption {
@@ -242,9 +259,16 @@ interface VariantOption {
 const colors = ref<VariantOption[]>([]);
 const sizes = ref<VariantOption[]>([]);
 const rams = ref<VariantOption[]>([]);
+const numbers = ref<VariantOption[]>([]);
 const selectedSize = ref<string>("");
+const selectedNumber = ref<string>("");
 const selectedRam = ref<string>("");
-const isFavorite = ref(false);
+
+const isFavorite = computed(() => {
+  return favoritesStore?.favoriteProducts?.some(
+    (fav) => fav.productId === selectedProductId
+  );
+});
 
 onMounted(() => {
   if (selectedProductId) {
@@ -267,6 +291,9 @@ onMounted(() => {
           rams.value = (variants["Ram"] || []).map(
             (value: string, index: number) => ({ id: index, value })
           );
+          numbers.value = (variants["Numara"] || []).map(
+            (value: string, index: number) => ({ id: index, value })
+          );
         }
       })
       .catch((error) => {
@@ -281,11 +308,18 @@ const setSelectedSize = (size: string) => {
   selectedSize.value = size;
 };
 
+const setSelectedNumber = (number: string) => {
+  selectedNumber.value = number;
+};
+
 const setSelectedRam = (ram: string) => {
   selectedRam.value = ram;
 };
 
 const addFavorites = async () => {
+  if (isFavorite.value) {
+    return;
+  }
   if (authStore.isAuth) {
     try {
       const productId = productDetail.value.id;
@@ -304,11 +338,11 @@ const addFavorites = async () => {
           },
         }
       );
-      if (response) {
-        isFavorite.value = true;
+      if (response && token) {
+        await favoritesStore.fetchFavoriteProducts(token);
       }
     } catch (error) {
-      console.error("Favorilere eklerken hata oluşt.", error);
+      console.error("Error while adding to favorites.", error);
     }
   } else {
     router.push("/giris-yap");

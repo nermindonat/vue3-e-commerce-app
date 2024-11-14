@@ -2,7 +2,7 @@ import axios from "axios";
 import { defineStore } from "pinia";
 import { object } from "yup";
 
-interface Product {
+export interface Product {
   id: number;
   name: string;
   price: number;

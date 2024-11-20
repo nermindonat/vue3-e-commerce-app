@@ -2,7 +2,7 @@
   <div class="relative w-3/4">
     <input
       type="text"
-      class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-full focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+      class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-full focus:border-[#f27a1a] focus:ring-1 focus:ring-[#f27a1a] focus:outline-none block p-2.5"
       :placeholder="placeholder ? placeholder : 'Search ...'"
       required
       :value="modelValue"

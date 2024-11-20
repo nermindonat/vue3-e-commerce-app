@@ -31,6 +31,10 @@
         </div>
       </div>
       <div
+        v-if="
+          favoritesStore.favoriteProducts &&
+          favoritesStore.favoriteProducts.length > 0
+        "
         class="w-[1200px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-4 -mt-4"
       >
         <div
@@ -67,6 +71,11 @@
             >{{ favorite.product.price }} TL</span
           >
         </div>
+      </div>
+      <div v-else>
+        <p class="text-center text-[18px] text-[#f27a1a] mt-2">
+          Favoriler Listeniz Henüz Boş
+        </p>
       </div>
     </div>
   </div>

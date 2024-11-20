@@ -104,7 +104,7 @@
           class="flex text-sm font-semibold leading-4 gap-2 underline"
         >
           <router-link to="/giris-yap">Giriş Yap</router-link>
-          <!-- <router-link to="/uye-ol">Üye Ol</router-link> -->
+          <router-link to="/uye-ol">Üye Ol</router-link>
         </div>
       </div>
       <div

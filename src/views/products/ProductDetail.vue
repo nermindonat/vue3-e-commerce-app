@@ -135,68 +135,43 @@
                 : "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellendus nulla vitae labore reiciendis ipsam. Ratione ab ea nemo, aperiam soluta accusamus? Corrupti, pariatur!"
             }}
           </p>
-          <div class="flex flex-col mt-6 pb-5 border-b-2 border-gray-200 mb-5">
-            <div v-if="colors.length > 0" class="flex flex-col mb-2">
-              <span class="mr-3 font-semibold mb-2">Renk:</span>
+          <div
+            v-for="variant in variantOptionList"
+            class="flex flex-col mt-6 mb-4"
+          >
+            <div v-if="variant.value === 'Renk'" class="flex flex-col">
+              <span class="mr-3 font-semibold mb-2">{{ variant.value }}:</span>
               <div class="flex flex-row items-center">
                 <button
-                  v-for="color in colors"
+                  v-for="color in variant.variantValues"
                   :key="color.id"
                   :style="{ backgroundColor: color.value }"
                   class="border-2 border-gray-300 rounded-full w-6 h-6 focus:outline-none mr-2"
                 ></button>
               </div>
             </div>
-            <div v-if="sizes.length > 0" class="flex flex-col">
+            <div v-else class="flex flex-col">
               <span class="mr-3 mb-2 font-semibold"
-                >Beden: {{ selectedSize }}</span
+                >{{ variant.value }}: {{ selectedValue }}</span
               >
               <div class="flex flex-row items-center">
-                <div v-for="size in sizes" :key="size.id" class="mb-2 mr-2">
+                <div
+                  v-for="variantValue in variant.variantValues"
+                  :key="variantValue.id"
+                  class="mb-2 mr-2"
+                >
                   <input
                     type="text"
-                    :value="size.value"
+                    :value="variantValue.value"
                     class="w-12 m-0 mr-2 mb-2 p-2 px-3 rounded border border-gray-400 bg-white text-sm font-semibold tracking-tight text-center text-gray-800 overflow-hidden cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#f27a1a] focus:border-[#f27a1a]"
                     readonly
-                    @click="setSelectedSize(size.value)"
-                  />
-                </div>
-              </div>
-            </div>
-            <div v-if="numbers.length > 0" class="flex flex-col">
-              <span class="mr-3 mb-2 font-semibold"
-                >Numara: {{ selectedNumber }}</span
-              >
-              <div class="flex flex-row items-center">
-                <div v-for="num in numbers" :key="num.id" class="mb-2 mr-2">
-                  <input
-                    type="text"
-                    :value="num.value"
-                    class="w-12 m-0 mr-2 mb-2 p-2 px-3 rounded border border-gray-400 bg-white text-sm font-semibold tracking-tight text-center text-gray-800 overflow-hidden cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#f27a1a] focus:border-[#f27a1a]"
-                    readonly
-                    @click="setSelectedNumber(num.value)"
-                  />
-                </div>
-              </div>
-            </div>
-            <div v-if="rams.length > 0" class="flex flex-col">
-              <span class="mr-3 mb-2 font-semibold"
-                >Ram: {{ selectedRam }}</span
-              >
-              <div class="flex flex-row items-center">
-                <div v-for="ram in rams" :key="ram.id" class="mb-2 mr-2">
-                  <input
-                    type="text"
-                    :value="ram.value"
-                    class="w-12 m-0 mr-2 mb-2 p-2 px-3 rounded border border-gray-400 bg-white text-sm font-semibold tracking-tight text-center text-gray-800 overflow-hidden cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#f27a1a] focus:border-[#f27a1a]"
-                    readonly
-                    @click="setSelectedRam(ram.value)"
+                    @click="setSelectedValue(variantValue.value)"
                   />
                 </div>
               </div>
             </div>
           </div>
-          <div class="flex">
+          <div class="flex border-t-2 border-gray-200 pt-5">
             <span class="title-font font-medium text-2xl text-gray-900">
               Fiyat:
               {{ productDetail.price }} TL
@@ -251,18 +226,19 @@ const favoritesStore = useFavoritesStore();
 const productDetail = ref<any>(null);
 const selectedProductId = productStore.selectedProductId;
 
-interface VariantOption {
+interface VariantValue {
   id: number;
   value: string;
 }
 
-const colors = ref<VariantOption[]>([]);
-const sizes = ref<VariantOption[]>([]);
-const rams = ref<VariantOption[]>([]);
-const numbers = ref<VariantOption[]>([]);
-const selectedSize = ref<string>("");
-const selectedNumber = ref<string>("");
-const selectedRam = ref<string>("");
+interface Variant {
+  variantId: number;
+  value: string;
+  variantValues: VariantValue[];
+}
+
+const variantOptionList = ref<Variant[]>([]);
+const selectedValue = ref<string>("");
 
 const isFavorite = computed(() => {
   return favoritesStore?.favoriteProducts?.some(
@@ -279,41 +255,37 @@ onMounted(() => {
         const variants = productDetail.value.groupedVariants;
 
         if (variants) {
-          colors.value = (variants["Renk"] || []).map(
-            (value: string, index: number) => ({
-              id: index,
-              value: value,
-            })
-          );
-          sizes.value = (variants["Beden"] || []).map(
-            (value: string, index: number) => ({ id: index, value })
-          );
-          rams.value = (variants["Ram"] || []).map(
-            (value: string, index: number) => ({ id: index, value })
-          );
-          numbers.value = (variants["Numara"] || []).map(
-            (value: string, index: number) => ({ id: index, value })
-          );
+          Object.entries(variants).forEach(([variantName, values], index) => {
+            const variantValues = (values as string[]).map((value, idx) => ({
+              id: idx,
+              value,
+            }));
+            if (variantName === "Renk") {
+              variantOptionList.value.unshift({
+                variantId: index,
+                value: variantName,
+                variantValues,
+              });
+            } else {
+              variantOptionList.value.push({
+                variantId: index,
+                value: variantName,
+                variantValues,
+              });
+            }
+          });
         }
       })
       .catch((error) => {
-        console.error("Error fetching product:", error);
+        console.error("Ürün getirilirken hata oluştu:", error);
       });
   } else {
-    console.error("No selectedProductId found in store!");
+    console.error("selectedProductId bulunamadı!");
   }
 });
 
-const setSelectedSize = (size: string) => {
-  selectedSize.value = size;
-};
-
-const setSelectedNumber = (number: string) => {
-  selectedNumber.value = number;
-};
-
-const setSelectedRam = (ram: string) => {
-  selectedRam.value = ram;
+const setSelectedValue = (size: string) => {
+  selectedValue.value = size;
 };
 
 const addFavorites = async () => {

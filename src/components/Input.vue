@@ -95,7 +95,7 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const { errorMessage: vError, value } = useField(() => props.name, undefined, {
-  validateOnValueUpdate: false,
+  validateOnValueUpdate: true,
   syncVModel: true,
 });
 const errorMessage = computed(() => props.errorMessage ?? vError.value);

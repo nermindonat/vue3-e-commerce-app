@@ -11,6 +11,7 @@ interface User {
 
 export const useAuthStore = defineStore("authStore", () => {
   const user = ref<User | null>(null);
+  const errorMessage = ref<string | null>(null);
   const isAuth = computed(() => !!user.value);
 
   function setAuth(userInfo: User, token: string) {
@@ -37,7 +38,7 @@ export const useAuthStore = defineStore("authStore", () => {
       }
       return response.data;
     } catch (error) {
-      console.error("Login işlemi sırasında hata oluştu:", error);
+      console.error("An error occurred during the login process.", error);
       throw error;
     }
   }
@@ -54,7 +55,10 @@ export const useAuthStore = defineStore("authStore", () => {
       );
       user.value = response.data;
     } catch (error) {
-      console.error("Kullanıcı bilgilerini alırken hata oluştu:", error);
+      console.error(
+        "An error occurred while fetching user information.",
+        error
+      );
     }
   }
 
@@ -70,6 +74,34 @@ export const useAuthStore = defineStore("authStore", () => {
     }
   }
 
+  async function register(
+    name: string,
+    surname: string,
+    email: string,
+    password: string
+  ) {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/auth/register`,
+        { name, surname, email, password }
+      );
+      errorMessage.value = null;
+      return response.data;
+    } catch (error: any) {
+      if (
+        error.response &&
+        error.response.data.message === "User with this email already exists"
+      ) {
+        errorMessage.value = "Bu e-posta adresiyle zaten bir hesap mevcut.";
+      }
+      console.error(
+        "An error occurred during the registration process.",
+        error
+      );
+      throw error;
+    }
+  }
+
   return {
     isAuth,
     user,
@@ -77,5 +109,7 @@ export const useAuthStore = defineStore("authStore", () => {
     setAuth,
     logout,
     checkAuth,
+    register,
+    errorMessage,
   };
 });

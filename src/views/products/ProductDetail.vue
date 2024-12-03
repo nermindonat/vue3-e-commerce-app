@@ -277,10 +277,10 @@ onMounted(() => {
         }
       })
       .catch((error) => {
-        console.error("Ürün getirilirken hata oluştu:", error);
+        console.error("An error occurred while fetching the product.", error);
       });
   } else {
-    console.error("selectedProductId bulunamadı!");
+    console.error("selectedProductId not found!");
   }
 });
 

@@ -65,11 +65,11 @@
 
 <script setup lang="ts">
 import * as yup from "yup";
-import Input from "../components/Input.vue";
-import Button from "../components/Button.vue";
+import Input from "../../components/Input.vue";
+import Button from "../../components/Button.vue";
 import { useField, useForm } from "vee-validate";
 import { useRouter } from "vue-router";
-import { useAuthStore } from "../stores/auth";
+import { useAuthStore } from "../../stores/auth";
 import { ref } from "vue";
 
 const router = useRouter();

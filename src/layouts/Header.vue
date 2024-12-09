@@ -51,7 +51,7 @@
             >
               {{ authStore.user?.email }}
             </p>
-            <div class="flex flex-row items-center mb-2">
+            <div class="flex flex-row items-center mb-2 hover:text-[#f27a1a]">
               <Icon icon="lsicon:order-outline" />
               <router-link
                 to="/siparislerim"
@@ -60,7 +60,7 @@
                 >Siparişlerim</router-link
               >
             </div>
-            <div class="flex flex-row items-center mb-2">
+            <div class="flex flex-row items-center mb-2 hover:text-[#f27a1a]">
               <Icon icon="mingcute:comment-line" />
               <router-link
                 to="/degerlendirmelerim"
@@ -69,7 +69,7 @@
                 >Değerlendirmelerim</router-link
               >
             </div>
-            <div class="flex flex-row items-center mb-2">
+            <div class="flex flex-row items-center mb-2 hover:text-[#f27a1a]">
               <Icon icon="ic:outline-discount" />
               <router-link
                 to="/indirim-kuponlarim"
@@ -78,7 +78,7 @@
                 >İndirim Kuponlarım</router-link
               >
             </div>
-            <div class="flex flex-row items-center mb-2">
+            <div class="flex flex-row items-center mb-2 hover:text-[#f27a1a]">
               <Icon icon="tdesign:user" />
               <router-link
                 to="/kullanici-bilgilerim"
@@ -87,7 +87,7 @@
                 >Kullanıcı Bilgilerim</router-link
               >
             </div>
-            <div class="flex flex-row items-center">
+            <div class="flex flex-row items-center hover:text-[#f27a1a]">
               <Icon icon="ic:baseline-logout" />
               <router-link
                 to="/"

@@ -33,6 +33,13 @@
             placeholder="Şifre"
             required
           />
+          <div class="flex justify-end">
+            <router-link
+              to="/sifremi-unuttum"
+              class="text-sm underline hover:text-[#f27a1a]"
+              >Şifremi Unuttum</router-link
+            >
+          </div>
           <Button type="submit">GİRİŞ YAP</Button>
         </div>
       </form>
@@ -42,12 +49,12 @@
 
 <script setup lang="ts">
 import * as yup from "yup";
-import Input from "../components/Input.vue";
-import Button from "../components/Button.vue";
+import Input from "../../components/Input.vue";
+import Button from "../../components/Button.vue";
 import { useField, useForm } from "vee-validate";
 import { useRouter } from "vue-router";
-import { useAuthStore } from "../stores/auth";
-import { useFavoritesStore } from "../stores/favorites";
+import { useAuthStore } from "../../stores/auth";
+import { useFavoritesStore } from "../../stores/favorites";
 import { ref } from "vue";
 
 const router = useRouter();

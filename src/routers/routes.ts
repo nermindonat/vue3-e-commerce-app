@@ -5,14 +5,15 @@ import {
 } from "vue-router";
 
 import Home from "../views/Home.vue";
-import Login from "../views/Login.vue";
-import Register from "../views/Register.vue";
+import Login from "../views/auth/Login.vue";
+import Register from "../views/auth/Register.vue";
 import MyOrders from "../views/MyOrders.vue";
 import MyReviews from "../views/MyReviews.vue";
 import MyDiscountCoupons from "../views/MyDiscountCoupons.vue";
 import MyUserInformation from "../views/MyUserInformation.vue";
 import ProductDetail from "../views/products/ProductDetail.vue";
 import Favorite from "../views/Favorite.vue";
+import ForgotPassword from "../views/ForgotPassword.vue";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -59,6 +60,11 @@ const routes: RouteRecordRaw[] = [
     path: "/favorilerim",
     name: "Favorite",
     component: Favorite,
+  },
+  {
+    path: "/sifremi-unuttum",
+    name: "Password Reset",
+    component: ForgotPassword,
   },
 ];
 

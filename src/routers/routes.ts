@@ -13,7 +13,8 @@ import MyDiscountCoupons from "../views/MyDiscountCoupons.vue";
 import MyUserInformation from "../views/MyUserInformation.vue";
 import ProductDetail from "../views/products/ProductDetail.vue";
 import Favorite from "../views/Favorite.vue";
-import ForgotPassword from "../views/ForgotPassword.vue";
+import ForgotPassword from "../views/auth/ForgotPassword.vue";
+import ResetPassword from "../views/auth/ResetPassword.vue";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -63,8 +64,13 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: "/sifremi-unuttum",
-    name: "Password Reset",
+    name: "Forgot Password",
     component: ForgotPassword,
+  },
+  {
+    path: "/yeni-sifre-olustur",
+    name: "Reset Password",
+    component: ResetPassword,
   },
 ];
 

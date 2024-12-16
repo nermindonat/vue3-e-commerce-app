@@ -58,7 +58,7 @@
             height="1.2em"
           />
           <div
-            class="absolute hidden group-hover:block text-sm bg-white text-black p-2 rounded-md mt-1 w-64 border border-gray-400"
+            class="absolute hidden group-hover:block text-sm bg-white text-black p-2 rounded-md mt-1 w-64 border border-gray-400 z-10"
           >
             Şifreniz en az 8 karakterden oluşmalı, bir büyük harf, bir rakam ve
             bir özel karakter içermelidir.

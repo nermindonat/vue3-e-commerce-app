@@ -9,7 +9,12 @@
     </div>
     <div class="mt-10 p-10 border border-gray-200 rounded">
       <div class="grid w-full grid-cols-1 md:grid-cols-1 gap-4">
-        <Button type="submit">TEKRAR GÖNDER</Button>
+        <Button
+          type="submit"
+          :disabled="isCountdownActive"
+          @click="resendHandler"
+          >TEKRAR GÖNDER {{ countdownShow }}</Button
+        >
       </div>
     </div>
   </div>
@@ -32,10 +37,10 @@
             placeholder="E-posta Adresi"
             required
           />
+          <div v-if="errorMessage" class="text-red-500 font-semibold text-sm">
+            <span>Bu e-posta adresi için kullanıcı bulunamadı.</span>
+          </div>
           <Button type="submit">ŞİFREMİ YENİLE</Button>
-        </div>
-        <div v-if="successMessage">
-          <h2>Şifreniz Gönderildi</h2>
         </div>
       </form>
     </div>
@@ -51,7 +56,11 @@ import { useField, useForm } from "vee-validate";
 import { ref } from "vue";
 
 const successMessage = ref(false);
+const errorMessage = ref(false);
 const emailShow = ref("");
+const countdown = ref(0);
+const isCountdownActive = ref(false);
+const countdownShow = ref("(3.00)");
 
 const validationSchema = yup.object({
   email: yup.string().required("E-posta alanı zorunludur"),
@@ -71,9 +80,47 @@ const submitHandler = form.handleSubmit(async (values) => {
     if (response) {
       successMessage.value = true;
       emailShow.value = values.email;
+      startCountdown();
     }
   } catch (error) {
-    console.error("An error occurred while sending the link..", error);
+    errorMessage.value = true;
+    console.error("An error occurred while sending the link.", error);
   }
 });
+
+const resendHandler = async () => {
+  try {
+    const response = await axios.post(
+      `${import.meta.env.VITE_API_BASE_URL}/auth/forgot-password`,
+      {
+        email: emailShow.value,
+      }
+    );
+    if (response) {
+      startCountdown();
+    }
+  } catch (error) {
+    console.error("An error occurred while resending the link.", error);
+  }
+};
+
+const startCountdown = () => {
+  countdown.value = 180;
+  isCountdownActive.value = true;
+
+  const interval = setInterval(() => {
+    if (countdown.value > 0) {
+      countdown.value--;
+      const minutes = Math.floor(countdown.value / 60);
+      const seconds = countdown.value % 60;
+      countdownShow.value = `(${minutes}:${seconds
+        .toString()
+        .padStart(2, "0")})`;
+    } else {
+      clearInterval(interval);
+      isCountdownActive.value = false;
+      countdownShow.value = "";
+    }
+  }, 1000);
+};
 </script>

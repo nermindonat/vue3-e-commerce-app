@@ -178,6 +178,7 @@
             </span>
             <button
               class="flex ml-auto text-white bg-[#F27A1AFF] border-0 py-2 px-6 focus:outline-none hover:bg-orange-400 rounded"
+              @click="addToCart"
             >
               Sepete Ekle
             </button>
@@ -217,12 +218,14 @@ import { getImageUrl } from "../../utils/imageUtils";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../../stores/auth";
 import { useFavoritesStore } from "../../stores/favorites";
+import { useCartStore } from "../../stores/cart";
 import axios from "axios";
 
 const router = useRouter();
 const authStore = useAuthStore();
 const productStore = useProductsStore();
 const favoritesStore = useFavoritesStore();
+const cartStore = useCartStore();
 const productDetail = ref<any>(null);
 const selectedProductId = productStore.selectedProductId;
 
@@ -318,6 +321,18 @@ const addFavorites = async () => {
     }
   } else {
     router.push("/giris-yap");
+  }
+};
+
+const addToCart = () => {
+  if (!authStore.isAuth) {
+    cartStore.addToCart({
+      ...productDetail.value,
+    });
+  } else {
+    console.log(
+      "Login olunmuş. Sepete ekleme işlemi kullanıcı hesabına yapılabilir."
+    );
   }
 };
 </script>

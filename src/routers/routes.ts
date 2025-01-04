@@ -15,6 +15,7 @@ import ProductDetail from "../views/products/ProductDetail.vue";
 import Favorite from "../views/Favorite.vue";
 import ForgotPassword from "../views/auth/ForgotPassword.vue";
 import ResetPassword from "../views/auth/ResetPassword.vue";
+import Cart from "../views/Cart.vue";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -71,6 +72,11 @@ const routes: RouteRecordRaw[] = [
     path: "/yeni-sifre-olustur",
     name: "Reset Password",
     component: ResetPassword,
+  },
+  {
+    path: "/sepet",
+    name: "Cart",
+    component: Cart,
   },
 ];
 

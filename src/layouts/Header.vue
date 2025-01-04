@@ -114,7 +114,9 @@
           icon="material-symbols:favorite-outline"
           class="w-[1.2em] h-[1.2em] mr-1"
         />
-        <a href="" @click="handleFavoritesClick">Favorilerim</a>
+        <router-link to="" @click="handleFavoritesClick"
+          >Favorilerim</router-link
+        >
         <div
           v-if="authStore.isAuth && favoriteCount"
           class="flex items-center justify-center bg-[#f27a1a] text-white text-[11px] w-4 h-4 leading-[16px] text-center ml-[3px] rounded-full z-10"
@@ -122,17 +124,17 @@
           {{ favoriteCount }}
         </div>
       </div>
-      <div class="flex items-center font-semibold">
+      <div class="flex items-center font-semibold hover:text-[#f27a1a]">
         <Icon
           icon="icon-park-outline:shopping"
           class="w-[1.2em] h-[1.2em] mr-1"
         />
-        <a href="">Sepetim</a>
+        <router-link to="/sepet">Sepetim</router-link>
         <div
-          v-if="authStore.isAuth"
+          v-if="cartStore.totalQuantity"
           class="bg-[#f27a1a] text-white text-[11px] w-4 h-4 leading-[16px] text-center ml-[3px] rounded-full z-10"
         >
-          1
+          {{ cartStore.totalQuantity }}
         </div>
       </div>
     </div>
@@ -144,12 +146,14 @@ import { Icon } from "@iconify/vue";
 import SearchInput from "../components/SearchInput.vue";
 import { useAuthStore } from "../stores/auth";
 import { useFavoritesStore } from "../stores/favorites";
+import { useCartStore } from "../stores/cart";
 import { useRouter } from "vue-router";
 import { computed, onMounted, ref, watch } from "vue";
 
 const router = useRouter();
 const authStore = useAuthStore();
 const favoritesStore = useFavoritesStore();
+const cartStore = useCartStore();
 const showDropdown = ref(false);
 
 const logout = () => {
@@ -178,6 +182,7 @@ watch(
 );
 
 onMounted(async () => {
+  cartStore.fetchCartItems();
   authStore.checkAuth();
   const token = localStorage.getItem("access_token");
   if (token) {

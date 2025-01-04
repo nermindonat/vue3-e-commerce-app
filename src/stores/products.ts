@@ -1,6 +1,5 @@
 import axios from "axios";
 import { defineStore } from "pinia";
-import { object } from "yup";
 
 export interface Product {
   id: number;
@@ -12,14 +11,14 @@ export interface Product {
 interface State {
   products?: Product[];
   selectedProductId: number;
-  productDetail?: object;
+  productDetail?: Product;
 }
 
 export const useProductsStore = defineStore("productStore", {
   state: (): State => ({
     products: undefined,
     selectedProductId: 0,
-    productDetail: object,
+    productDetail: undefined,
   }),
 
   actions: {

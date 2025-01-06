@@ -1,8 +1,9 @@
 <template>
   <div class="w-full flex justify-center mt-5">
-    <!-- Ana Sepet Alanı -->
-    <div class="w-[1200px] flex justify-between gap-4">
-      <!-- Ürünler Listesi -->
+    <div
+      v-if="cartStore.totalQuantity"
+      class="w-[1200px] flex justify-between gap-4"
+    >
       <div class="w-[75%] flex flex-col">
         <h2 class="text-2xl mb-5">
           Sepetim ({{ cartStore.totalQuantity }} Ürün)
@@ -12,32 +13,26 @@
           :key="item.productId"
           class="w-full h-[200px] bg-white p-5 border shadow-sm rounded-md mb-10"
         >
-          <!-- Ürün Kartları -->
           <div class="flex items-center gap-4">
-            <!-- Ürün Görseli -->
-            <div class="w-[100px] h-[100px] flex-shrink-0">
+            <div class="w-[100px] h-[150px] flex-shrink-0">
               <img
                 :src="getImageUrl(item.productDetail?.image)"
                 alt="Ürün Görseli"
                 class="w-full h-full object-cover rounded-md border"
               />
             </div>
-
-            <!-- Ürün Bilgileri -->
             <div class="flex-1">
-              <h3 class="text-base font-medium text-gray-800">
+              <h3 class="text-base font-medium text-gray-800 mb-4">
                 {{ item.productDetail?.name }}
               </h3>
               <p class="text-sm text-gray-600">
                 Fiyat:
-                <span class="text-red-500 font-bold"
+                <span class="text-[#F27A1AFF] font-bold"
                   >{{ item.productDetail?.price }} TL</span
                 >
               </p>
             </div>
-
-            <!-- Ürün Adet Kontrolü -->
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 mr-5">
               <button
                 class="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-md hover:bg-gray-300"
               >
@@ -50,14 +45,17 @@
                 +
               </button>
             </div>
-
-            <!-- Ürün Kaldır -->
-            <button class="text-sm text-red-500 hover:underline">Kaldır</button>
+            <button class="flex flex-row items-center text-base ml-5">
+              <Icon
+                icon="material-symbols-light:delete-outline"
+                width="24"
+                height="24"
+              />
+              <span class="font-semibold">Sil</span>
+            </button>
           </div>
         </div>
       </div>
-
-      <!-- Özet Bölümü -->
       <div class="w-[25%] h-[300px] bg-white p-5 border shadow-md rounded-md">
         <h3 class="text-lg font-bold mb-5">Sipariş Özeti</h3>
         <div class="flex justify-between mb-4">
@@ -71,19 +69,40 @@
         <hr class="my-4" />
         <div class="flex justify-between mb-4">
           <span class="text-base font-bold">Toplam:</span>
-          <span class="text-base font-bold text-red-500"> TL</span>
+          <span class="text-base font-bold text-[#F27A1AFF]"> TL</span>
         </div>
         <button
-          class="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600"
+          class="w-full bg-[#F27A1AFF] text-white py-2 rounded-md hover:bg-orange-400"
         >
           Alışverişi Tamamla
         </button>
       </div>
     </div>
+    <div
+      v-else
+      class="w-[1200px] flex justify-between border border-gray-200 rounded-lg p-4 px-6 shadow-sm box-border"
+    >
+      <div class="flex items-center">
+        <div
+          class="w-[50px] h-[50px] flex items-center justify-center bg-[#fff1e6] text-[#f27a1a] text-2xl rounded-full"
+        >
+          <Icon icon="icon-park-outline:shopping" class="w-[1.2em] h-[1.2em]" />
+        </div>
+        <span class="text-gray-800 text-lg font-semibold ml-5"
+          >Sepetinde ürün bulunmamaktadır.</span
+        >
+      </div>
+      <button
+        class="flex items-center ml-auto text-white bg-[#F27A1AFF] font-semibold border-0 py-2 px-6 focus:outline-none hover:bg-orange-400 rounded"
+      >
+        Alışverişe Başla
+      </button>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { Icon } from "@iconify/vue";
 import { useCartStore } from "../stores/cart";
 import { onMounted } from "vue";
 import { getImageUrl } from "../utils/imageUtils";

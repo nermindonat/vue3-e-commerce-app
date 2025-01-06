@@ -5,7 +5,7 @@ interface CartItem {
   cartId: null;
   productId: number;
   quantity: number;
-  productDetail?: Product;
+  productDetail: Product;
 }
 
 interface State {
@@ -28,7 +28,6 @@ export const useCartStore = defineStore("cartStore", {
       const existingItem = this.cartItems.find(
         (item) => item.productId === product.id
       );
-
       if (existingItem) {
         existingItem.quantity += 1;
       } else {
@@ -41,6 +40,23 @@ export const useCartStore = defineStore("cartStore", {
       }
       localStorage.setItem("guestCart", JSON.stringify(this.cartItems));
     },
+
+    increaseQuantity(productId: number) {
+      const item = this.cartItems.find((item) => item.productId === productId);
+      if (item) {
+        item.quantity += 1;
+        localStorage.setItem("guestCart", JSON.stringify(this.cartItems));
+      }
+    },
+
+    decreaseQuantity(productId: number) {
+      const item = this.cartItems.find((item) => item.productId === productId);
+      if (item && item.quantity > 1) {
+        item.quantity -= 1;
+        localStorage.setItem("guestCart", JSON.stringify(this.cartItems));
+      }
+    },
+
     fetchCartItems() {
       const cartFromStorage = JSON.parse(
         localStorage.getItem("guestCart") ?? "[]"

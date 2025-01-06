@@ -12,6 +12,7 @@
           v-for="item in cartStore.cartItems"
           :key="item.productId"
           class="w-full h-[200px] bg-white p-5 border shadow-sm rounded-md mb-10"
+          @click="setSelectedProduct(item.productId)"
         >
           <div class="flex items-center gap-4">
             <div class="w-[100px] h-[150px] flex-shrink-0">
@@ -35,12 +36,14 @@
             <div class="flex items-center gap-2 mr-5">
               <button
                 class="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-md hover:bg-gray-300"
+                @click.stop="cartStore.decreaseQuantity(item.productId)"
               >
                 -
               </button>
               <span class="text-lg font-medium">{{ item.quantity }}</span>
               <button
                 class="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-md hover:bg-gray-300"
+                @click.stop="cartStore.increaseQuantity(item.productId)"
               >
                 +
               </button>
@@ -94,6 +97,7 @@
       </div>
       <button
         class="flex items-center ml-auto text-white bg-[#F27A1AFF] font-semibold border-0 py-2 px-6 focus:outline-none hover:bg-orange-400 rounded"
+        @click="clickStartShopping"
       >
         Alışverişe Başla
       </button>
@@ -105,9 +109,27 @@
 import { Icon } from "@iconify/vue";
 import { useCartStore } from "../stores/cart";
 import { onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { getImageUrl } from "../utils/imageUtils";
+import { urlFormat } from "../utils/formatters";
+import { useProductsStore } from "../stores/products";
 
+const router = useRouter();
 const cartStore = useCartStore();
+const productStore = useProductsStore();
+
+const setSelectedProduct = (id: number) => {
+  productStore.selectedProductId = id;
+  const cartItem = cartStore.cartItems?.find((i) => i.productId === id);
+  if (cartItem) {
+    productStore.selectedProductId = cartItem.productId;
+    router.push(`/urun/${urlFormat(cartItem.productDetail.name)}`);
+  }
+};
+
+const clickStartShopping = () => {
+  router.push("/");
+};
 
 onMounted(async () => {
   await cartStore.fetchCartItems();

@@ -28,6 +28,10 @@
 # Favorite Products Page
 ![image](https://github.com/user-attachments/assets/a94f46c2-2c29-4a40-8063-8b9446e970f8)
 
+# Cart Page
+![image](https://github.com/user-attachments/assets/f4c3250a-f002-4fdf-adbd-8590a8d383e5)
+
+
 
 
 

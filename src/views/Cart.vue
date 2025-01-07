@@ -9,6 +9,25 @@
           Sepetim ({{ cartStore.totalQuantity }} Ürün)
         </h2>
         <div
+          v-if="!authStore.isAuth"
+          class="border border-gray-300 rounded bg-[#f0f5ff] p-4 px-6 shadow-sm mb-5"
+        >
+          <div class="flex items-center">
+            <div class="flex items-center justify-center text-lg">
+              <Icon icon="iconamoon:profile-bold" class="w-[1.2em] h-[1.2em]" />
+            </div>
+            <span class="text-gray-800 text-base font-medium ml-3"
+              >Alışverişini daha hızlı tamamlamak için</span
+            >
+            <router-link
+              to="/giris-yap"
+              class="ml-2 text-[#f27a1a] font-semibold underline"
+            >
+              Giriş Yap
+            </router-link>
+          </div>
+        </div>
+        <div
           v-for="item in cartStore.cartItems"
           :key="item.productId"
           class="w-full h-[200px] bg-white p-5 border shadow-sm rounded-md mb-10"
@@ -113,10 +132,12 @@ import { useRouter } from "vue-router";
 import { getImageUrl } from "../utils/imageUtils";
 import { urlFormat } from "../utils/formatters";
 import { useProductsStore } from "../stores/products";
+import { useAuthStore } from "../stores/auth";
 
 const router = useRouter();
 const cartStore = useCartStore();
 const productStore = useProductsStore();
+const authStore = useAuthStore();
 
 const setSelectedProduct = (id: number) => {
   productStore.selectedProductId = id;

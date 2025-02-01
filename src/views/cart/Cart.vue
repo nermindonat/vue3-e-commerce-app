@@ -28,7 +28,7 @@
           </div>
         </div>
         <div
-          v-for="item in cartStore.cartItems"
+          v-for="item in cartStore.allCartItems"
           :key="item.productId"
           class="w-full h-[200px] bg-white p-5 border shadow-sm rounded-md mb-10"
           @click="setSelectedProduct(item.productId)"
@@ -36,19 +36,19 @@
           <div class="flex items-center gap-4">
             <div class="w-[100px] h-[150px] flex-shrink-0">
               <img
-                :src="getImageUrl(item.productDetail?.image)"
+                :src="getImageUrl(item.product?.image)"
                 alt="Ürün Görseli"
                 class="w-full h-full object-cover rounded-md border"
               />
             </div>
             <div class="flex-1">
               <h3 class="text-base font-medium text-gray-800 mb-4">
-                {{ item.productDetail?.name }}
+                {{ item.product?.name }}
               </h3>
               <p class="text-sm text-gray-600">
                 Fiyat:
                 <span class="text-[#F27A1AFF] font-bold"
-                  >{{ item.productDetail?.price }} TL</span
+                  >{{ item.product?.price }} TL</span
                 >
               </p>
             </div>
@@ -81,11 +81,11 @@
       <div class="w-[25%] h-[300px] bg-white p-5 border shadow-md rounded-md">
         <h3 class="text-lg font-bold mb-5">Sipariş Özeti</h3>
         <div class="flex justify-between mb-4">
-          <span class="text-sm text-gray-600">Ara Toplam:</span>
+          <span class="text-sm text-gray-600">Ürünün Toplamı:</span>
           <span class="text-sm font-medium text-gray-800"> TL</span>
         </div>
         <div class="flex justify-between mb-4">
-          <span class="text-sm text-gray-600">Kargo:</span>
+          <span class="text-sm text-gray-600">Kargo Toplam:</span>
           <span class="text-sm font-medium text-gray-800">Ücretsiz</span>
         </div>
         <hr class="my-4" />
@@ -94,10 +94,19 @@
           <span class="text-base font-bold text-[#F27A1AFF]"> TL</span>
         </div>
         <button
-          class="w-full bg-[#F27A1AFF] text-white py-2 rounded-md hover:bg-orange-400"
+          class="w-full bg-[#F27A1AFF] text-white font-semibold py-2 rounded-md hover:bg-orange-400"
+          @click="clickConfirmCart"
         >
-          Alışverişi Tamamla
+          Sepeti Onayla
         </button>
+        <div v-if="showWarningModal">
+          <WarningModal
+            :open="showWarningModal"
+            @close="closeModal"
+            @loginOrSignUp="handleLoginOrSignUp"
+            @continueWithoutSignUp="handleContinueWithoutSignUp"
+          ></WarningModal>
+        </div>
       </div>
     </div>
     <div
@@ -126,25 +135,27 @@
 
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
-import { useCartStore } from "../stores/cart";
-import { onMounted } from "vue";
+import { useCartStore } from "../../stores/cart";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { getImageUrl } from "../utils/imageUtils";
-import { urlFormat } from "../utils/formatters";
-import { useProductsStore } from "../stores/products";
-import { useAuthStore } from "../stores/auth";
+import { getImageUrl } from "../../utils/imageUtils";
+import { urlFormat } from "../../utils/formatters";
+import { useProductsStore } from "../../stores/products";
+import { useAuthStore } from "../../stores/auth";
+import WarningModal from "./WarningModal.vue";
 
 const router = useRouter();
 const cartStore = useCartStore();
 const productStore = useProductsStore();
 const authStore = useAuthStore();
+const showWarningModal = ref(false);
 
 const setSelectedProduct = (id: number) => {
   productStore.selectedProductId = id;
   const cartItem = cartStore.cartItems?.find((i) => i.productId === id);
   if (cartItem) {
     productStore.selectedProductId = cartItem.productId;
-    router.push(`/urun/${urlFormat(cartItem.productDetail.name)}`);
+    router.push(`/urun/${urlFormat(cartItem.product.name)}`);
   }
 };
 
@@ -152,7 +163,30 @@ const clickStartShopping = () => {
   router.push("/");
 };
 
+const clickConfirmCart = () => {
+  if (authStore.isAuth) {
+    console.log("Ödeme aşaması");
+  } else {
+    showWarningModal.value = true;
+  }
+};
+
+const closeModal = () => {
+  showWarningModal.value = false;
+};
+
+const handleLoginOrSignUp = () => {
+  showWarningModal.value = false;
+  router.push("/giris-yap");
+};
+
+const handleContinueWithoutSignUp = () => {
+  showWarningModal.value = false;
+  console.log("here");
+};
+
 onMounted(async () => {
   await cartStore.fetchCartItems();
+  console.log("Sepete gelen ürünler:", cartStore.allCartItems);
 });
 </script>

@@ -182,11 +182,11 @@ watch(
 );
 
 onMounted(async () => {
-  cartStore.fetchCartItems();
   authStore.checkAuth();
   const token = localStorage.getItem("access_token");
   if (token) {
     await favoritesStore.fetchFavoriteProducts(token);
+    await cartStore.fetchCartItems();
   }
 });
 </script>

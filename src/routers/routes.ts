@@ -15,7 +15,7 @@ import ProductDetail from "../views/products/ProductDetail.vue";
 import Favorite from "../views/Favorite.vue";
 import ForgotPassword from "../views/auth/ForgotPassword.vue";
 import ResetPassword from "../views/auth/ResetPassword.vue";
-import Cart from "../views/Cart.vue";
+import Cart from "../views/cart/Cart.vue";
 
 const routes: RouteRecordRaw[] = [
   {

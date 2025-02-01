@@ -325,14 +325,8 @@ const addFavorites = async () => {
 };
 
 const addToCart = () => {
-  if (!authStore.isAuth) {
-    cartStore.addToCart({
-      ...productDetail.value,
-    });
-  } else {
-    console.log(
-      "Login olunmuş. Sepete ekleme işlemi kullanıcı hesabına yapılabilir."
-    );
-  }
+  cartStore.addToCart({
+    ...productDetail.value,
+  });
 };
 </script>

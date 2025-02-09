@@ -22,7 +22,6 @@ export const useFavoritesStore = defineStore("favoritesStore", {
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_API_BASE_URL}/favorites`,
-
           {
             headers: {
               Authorization: `Bearer ${token}`,

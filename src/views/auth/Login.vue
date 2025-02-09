@@ -55,11 +55,13 @@ import { useField, useForm } from "vee-validate";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../../stores/auth";
 import { useFavoritesStore } from "../../stores/favorites";
+import { useCartStore } from "../../stores/cart";
 import { ref } from "vue";
 
 const router = useRouter();
 const authStore = useAuthStore();
 const favoritesStore = useFavoritesStore();
+const cartStore = useCartStore();
 const showErrorMessage = ref(false);
 
 const validationSchema = yup.object({
@@ -78,10 +80,11 @@ const submitHandler = form.handleSubmit(async (values) => {
     const token = localStorage.getItem("access_token");
     if (token) {
       await favoritesStore.fetchFavoriteProducts(token);
+      await cartStore.fetchCartItems();
     }
   } catch (error) {
     showErrorMessage.value = true;
-    console.error("Giriş yaparken bir hata oluştu.", error);
+    console.error("An error occurred while logging in.", error);
   }
 });
 </script>

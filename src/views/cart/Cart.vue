@@ -182,11 +182,10 @@ const handleLoginOrSignUp = () => {
 
 const handleContinueWithoutSignUp = () => {
   showWarningModal.value = false;
-  console.log("here");
 };
 
 onMounted(async () => {
   await cartStore.fetchCartItems();
-  console.log("Sepete gelen ürünler:", cartStore.allCartItems);
+  await cartStore.fetchCartItemsLocalstorage();
 });
 </script>

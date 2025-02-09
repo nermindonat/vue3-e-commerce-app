@@ -131,10 +131,10 @@
         />
         <router-link to="/sepet">Sepetim</router-link>
         <div
-          v-if="cartStore.totalQuantity"
+          v-if="totalProductQuantity"
           class="bg-[#f27a1a] text-white text-[11px] w-4 h-4 leading-[16px] text-center ml-[3px] rounded-full z-10"
         >
-          {{ cartStore.totalQuantity }}
+          {{ totalProductQuantity }}
         </div>
       </div>
     </div>
@@ -156,12 +156,19 @@ const favoritesStore = useFavoritesStore();
 const cartStore = useCartStore();
 const showDropdown = ref(false);
 
-const logout = () => {
+const logout = async () => {
   authStore.logout();
+  await cartStore.fetchCartItemsLocalstorage();
 };
 
 const favoriteCount = computed(() => {
   return favoritesStore?.favoriteProducts?.length;
+});
+
+const totalProductQuantity = computed(() => {
+  return authStore.isAuth
+    ? cartStore.totalQuantity
+    : cartStore.totalQuantityLocalstorage;
 });
 
 const handleFavoritesClick = () => {
@@ -187,6 +194,8 @@ onMounted(async () => {
   if (token) {
     await favoritesStore.fetchFavoriteProducts(token);
     await cartStore.fetchCartItems();
+  } else {
+    await cartStore.fetchCartItemsLocalstorage();
   }
 });
 </script>

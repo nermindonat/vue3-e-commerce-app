@@ -28,6 +28,10 @@ export const useCartStore = defineStore("cartStore", {
         0
       );
     },
+    totalQuantityLocalstorage(): number {
+      return this.cartItems.reduce((total, item) => total + item.quantity, 0);
+    },
+
     allCartItems(state): CartItem[] {
       const allItems = state.backendCartItems.concat(state.cartItems);
       // 1. Quantity'leri product.id'ye göre grupla
@@ -70,6 +74,7 @@ export const useCartStore = defineStore("cartStore", {
           );
           if (response.status === 201) {
             this.backendCartItems.push(response.data);
+            await this.fetchCartItems();
           }
         } catch (error) {
           console.error("Error", error);
@@ -128,16 +133,19 @@ export const useCartStore = defineStore("cartStore", {
           this.backendCartItems = response.data;
         } catch (error) {
           console.error(
-            "An error occurred while fetching user information.",
+            "Kullanıcı bilgileri alınırken bir hata oluştu.",
             error
           );
         }
-      } else {
-        const cartFromStorage = JSON.parse(
-          localStorage.getItem("guestCart") ?? "[]"
-        );
-        this.cartItems = cartFromStorage;
       }
+      await this.fetchCartItemsLocalstorage();
+    },
+
+    async fetchCartItemsLocalstorage() {
+      const cartFromStorage = JSON.parse(
+        localStorage.getItem("guestCart") ?? "[]"
+      );
+      this.cartItems = cartFromStorage;
     },
   },
 });

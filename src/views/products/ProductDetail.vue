@@ -142,12 +142,22 @@
             <div v-if="variant.value === 'Renk'" class="flex flex-col">
               <span class="mr-3 font-semibold mb-2">{{ variant.value }}:</span>
               <div class="flex flex-row items-center">
-                <button
+                <div
                   v-for="color in variant.variantValues"
                   :key="color.id"
-                  :style="{ backgroundColor: color.value }"
-                  class="border-2 border-gray-300 rounded-full w-6 h-6 focus:outline-none mr-2"
-                ></button>
+                  :class="[
+                    'w-12 flex items-center justify-center rounded-xl py-2',
+                    color.value === selectedColor
+                      ? 'border-2 border-[#f27a1a]'
+                      : 'border-2 border-transparent',
+                  ]"
+                >
+                  <button
+                    :style="{ backgroundColor: color.value }"
+                    class="border-2 border-gray-400 rounded-full w-6 h-6 focus:outline-none"
+                    @click="selectedColor = color.value"
+                  ></button>
+                </div>
               </div>
             </div>
             <div v-else class="flex flex-col">
@@ -163,9 +173,15 @@
                   <input
                     type="text"
                     :value="variantValue.value"
-                    class="w-12 m-0 mr-2 mb-2 p-2 px-3 rounded border border-gray-400 bg-white text-sm font-semibold tracking-tight text-center text-gray-800 overflow-hidden cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#f27a1a] focus:border-[#f27a1a]"
+                    :class="[
+                      'w-14 m-0 mr-2 mb-2 p-2 px-3 rounded-xl bg-white text-sm font-semibold tracking-tight text-center text-gray-800 overflow-hidden cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#f27a1a] focus:border-[#f27a1a]',
+                      showWarning && !selectedValue
+                        ? 'border-2 border-red-500 shake-animation'
+                        : 'border border-gray-200',
+                    ]"
                     readonly
                     @click="setSelectedValue(variantValue.value)"
+                    @animationend="handleAnimationEnd"
                   />
                 </div>
               </div>
@@ -178,7 +194,7 @@
             </span>
             <button
               class="flex ml-auto text-white bg-[#F27A1AFF] border-0 py-2 px-6 focus:outline-none hover:bg-orange-400 rounded"
-              @click="addToCart"
+              @click="addToCartClick"
             >
               Sepete Ekle
             </button>
@@ -228,6 +244,7 @@ const favoritesStore = useFavoritesStore();
 const cartStore = useCartStore();
 const productDetail = ref<any>(null);
 const selectedProductId = productStore.selectedProductId;
+const showWarning = ref(false);
 
 interface VariantValue {
   id: number;
@@ -242,6 +259,7 @@ interface Variant {
 
 const variantOptionList = ref<Variant[]>([]);
 const selectedValue = ref<string>("");
+const selectedColor = ref<string>("");
 
 const isFavorite = computed(() => {
   return favoritesStore?.favoriteProducts?.some(
@@ -269,6 +287,9 @@ onMounted(() => {
                 value: variantName,
                 variantValues,
               });
+              if (variantValues.length > 0) {
+                selectedColor.value = variantValues[0].value;
+              }
             } else {
               variantOptionList.value.push({
                 variantId: index,
@@ -324,9 +345,41 @@ const addFavorites = async () => {
   }
 };
 
-const addToCart = () => {
-  cartStore.addToCart({
-    ...productDetail.value,
-  });
+const addToCartClick = () => {
+  if (!selectedValue.value) {
+    showWarning.value = true;
+  } else {
+    cartStore.addToCart({
+      ...productDetail.value,
+    });
+  }
+};
+
+const handleAnimationEnd = () => {
+  showWarning.value = false;
 };
 </script>
+
+<style scoped>
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+  75% {
+    transform: translateX(-5px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.shake-animation {
+  animation: shake 1.5s ease-in-out;
+}
+</style>

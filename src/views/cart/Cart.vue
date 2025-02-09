@@ -1,13 +1,11 @@
 <template>
   <div class="w-full flex justify-center mt-5">
     <div
-      v-if="cartStore.totalQuantity"
+      v-if="totalProductQuantity"
       class="w-[1200px] flex justify-between gap-4"
     >
       <div class="w-[75%] flex flex-col">
-        <h2 class="text-2xl mb-5">
-          Sepetim ({{ cartStore.totalQuantity }} Ürün)
-        </h2>
+        <h2 class="text-2xl mb-5">Sepetim ({{ totalProductQuantity }} Ürün)</h2>
         <div
           v-if="!authStore.isAuth"
           class="border border-gray-300 rounded bg-[#f0f5ff] p-4 px-6 shadow-sm mb-5"
@@ -136,7 +134,7 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
 import { useCartStore } from "../../stores/cart";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { getImageUrl } from "../../utils/imageUtils";
 import { urlFormat } from "../../utils/formatters";
@@ -149,6 +147,12 @@ const cartStore = useCartStore();
 const productStore = useProductsStore();
 const authStore = useAuthStore();
 const showWarningModal = ref(false);
+
+const totalProductQuantity = computed(() => {
+  return authStore.isAuth
+    ? cartStore.totalQuantity
+    : cartStore.totalQuantityLocalstorage;
+});
 
 const setSelectedProduct = (id: number) => {
   productStore.selectedProductId = id;

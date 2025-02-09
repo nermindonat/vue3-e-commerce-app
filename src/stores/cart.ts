@@ -36,7 +36,10 @@ export const useCartStore = defineStore("cartStore", {
       const allItems = state.backendCartItems.concat(state.cartItems);
       // 1. Quantity'leri product.id'ye göre grupla
       const groupedItems = allItems.reduce((acc, currentItem) => {
-        const productId = currentItem.product.id;
+        const productId = currentItem.product?.id;
+        if (!productId) {
+          return acc;
+        }
         // Eğer bu product.id daha önce eklenmemişse yeni entry oluştur
         if (!acc[productId]) {
           acc[productId] = { ...currentItem };

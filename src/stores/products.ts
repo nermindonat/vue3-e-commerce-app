@@ -25,7 +25,7 @@ export const useProductsStore = defineStore("productStore", {
     async fetchAllProducts() {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/product`
+          `${import.meta.env.VITE_API_BASE_URL}/products`
         );
         this.products = response.data;
       } catch (error) {

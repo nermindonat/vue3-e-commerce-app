@@ -100,13 +100,14 @@ export const useCartStore = defineStore("cartStore", {
       }
     },
 
-    increaseQuantity(productId: number) {
+    async increaseQuantity(productId: number) {
       const item = this.allCartItems.find(
         (item) => item.productId === productId
       );
-      if (item) {
-        item.quantity += 1;
-        localStorage.setItem("guestCart", JSON.stringify(this.cartItems));
+      if (item && item.product) {
+        await this.addToCart(item.product);
+      } else {
+        console.error("Product not found for id:", productId);
       }
     },
 

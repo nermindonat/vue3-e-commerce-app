@@ -193,10 +193,15 @@
               {{ productDetail.price }} TL
             </span>
             <button
-              class="flex ml-auto text-white bg-[#F27A1AFF] border-0 py-2 px-6 focus:outline-none hover:bg-orange-400 rounded"
+              :class="[
+                'flex ml-auto text-white font-semibold  border-0 py-2 px-6 focus:outline-none  rounded',
+                successMessage
+                  ? 'bg-green-500 hover:bg-green-600'
+                  : 'bg-[#F27A1AFF] hover:bg-orange-400',
+              ]"
               @click="addToCartClick"
             >
-              Sepete Ekle
+              {{ successMessage ? "Sepete Eklendi" : "Sepete Ekle" }}
             </button>
             <button
               class="relative rounded-full w-10 h-10 p-0 border border-[#e6e6e6] inline-flex items-center justify-center text-gray-500 ml-4 hover:text-[#f27a1a] hover:shadow-lg transition-all duration-200 group"
@@ -245,6 +250,7 @@ const cartStore = useCartStore();
 const productDetail = ref<any>(null);
 const selectedProductId = productStore.selectedProductId;
 const showWarning = ref(false);
+const successMessage = ref(false);
 
 interface VariantValue {
   id: number;
@@ -352,6 +358,11 @@ const addToCartClick = () => {
     cartStore.addToCart({
       ...productDetail.value,
     });
+    selectedValue.value = "";
+    successMessage.value = true;
+    setTimeout(() => {
+      successMessage.value = false;
+    }, 2000);
   }
 };
 

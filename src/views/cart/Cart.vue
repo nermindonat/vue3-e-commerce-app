@@ -60,10 +60,13 @@
               <span class="text-lg font-medium">{{ item.quantity }}</span>
               <button
                 class="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-md hover:bg-gray-300"
-                @click.stop="cartStore.increaseQuantity(item.productId)"
+                @click.stop="clickIncreaseQuantity(item.productId)"
               >
                 +
               </button>
+              <div v-if="showSucceesModal">
+                <SucceesModal :open="showSucceesModal" />
+              </div>
             </div>
             <button class="flex flex-row items-center text-base ml-5">
               <Icon
@@ -141,12 +144,14 @@ import { urlFormat } from "../../utils/formatters";
 import { useProductsStore } from "../../stores/products";
 import { useAuthStore } from "../../stores/auth";
 import WarningModal from "./WarningModal.vue";
+import SucceesModal from "./SucceesModal.vue";
 
 const router = useRouter();
 const cartStore = useCartStore();
 const productStore = useProductsStore();
 const authStore = useAuthStore();
 const showWarningModal = ref(false);
+const showSucceesModal = ref(false);
 
 const totalProductQuantity = computed(() => {
   return authStore.isAuth
@@ -161,6 +166,14 @@ const setSelectedProduct = (id: number) => {
     productStore.selectedProductId = cartItem.productId;
     router.push(`/urun/${urlFormat(cartItem.product.name)}`);
   }
+};
+
+const clickIncreaseQuantity = (productId: number) => {
+  showSucceesModal.value = true;
+  cartStore.increaseQuantity(productId);
+  setTimeout(() => {
+    showSucceesModal.value = false;
+  }, 500);
 };
 
 const clickStartShopping = () => {

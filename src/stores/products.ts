@@ -36,7 +36,7 @@ export const useProductsStore = defineStore("productStore", {
     async fetchProductById(selectedProductId: number) {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/product/${selectedProductId}`
+          `${import.meta.env.VITE_API_BASE_URL}/products/${selectedProductId}`
         );
         this.productDetail = response.data;
         this.selectedProductId = selectedProductId;

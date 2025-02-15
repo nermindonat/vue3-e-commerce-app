@@ -106,8 +106,6 @@ export const useCartStore = defineStore("cartStore", {
       const item = this.backendCartItems.find(
         (item) => item.productId === productId
       );
-      console.log("item:", item);
-
       if (!item) {
         console.error("Cart item not found for product id:", productId);
         return;
@@ -122,7 +120,6 @@ export const useCartStore = defineStore("cartStore", {
           }
         );
         const updatedItem = response.data;
-        console.log("updated item:", updatedItem);
 
         if (updatedItem.quantity < item.quantity) {
           const index = this.backendCartItems.findIndex(

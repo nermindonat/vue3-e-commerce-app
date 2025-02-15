@@ -52,8 +52,14 @@
             </div>
             <div class="flex items-center gap-2 mr-5">
               <button
-                class="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-md hover:bg-gray-300"
-                @click.stop="cartStore.decreaseQuantity(item.productId)"
+                class="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-md hover:bg-gray-300 cursor-pointer disabled:bg-gray-100 disabled:opacity-50"
+                @click.stop="clickDecreaseQuantity(item.productId)"
+                :disabled="item.quantity === 1"
+                :title="
+                  item.quantity === 1
+                    ? 'Bu üründen en az 1 adet satın alabilirsiniz.'
+                    : ''
+                "
               >
                 -
               </button>
@@ -171,6 +177,14 @@ const setSelectedProduct = (id: number) => {
 const clickIncreaseQuantity = (productId: number) => {
   showSucceesModal.value = true;
   cartStore.increaseQuantity(productId);
+  setTimeout(() => {
+    showSucceesModal.value = false;
+  }, 500);
+};
+
+const clickDecreaseQuantity = (productId: number) => {
+  showSucceesModal.value = true;
+  cartStore.decreaseQuantity(productId);
   setTimeout(() => {
     showSucceesModal.value = false;
   }, 500);

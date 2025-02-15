@@ -4,6 +4,7 @@ import { useAuthStore } from "./auth";
 import axios from "axios";
 
 interface CartItem {
+  id?: number;
   cartId: null | number;
   productId: number;
   quantity: number;
@@ -100,25 +101,76 @@ export const useCartStore = defineStore("cartStore", {
       }
     },
 
+    async deleteOneItemFromCart(productId: number) {
+      const token = localStorage.getItem("access_token");
+      const item = this.backendCartItems.find(
+        (item) => item.productId === productId
+      );
+      console.log("item:", item);
+
+      if (!item) {
+        console.error("Cart item not found for product id:", productId);
+        return;
+      }
+      try {
+        const response = await axios.delete(
+          `${import.meta.env.VITE_API_BASE_URL}/cart-item/one/${item.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const updatedItem = response.data;
+        console.log("updated item:", updatedItem);
+
+        if (updatedItem.quantity < item.quantity) {
+          const index = this.backendCartItems.findIndex(
+            (cartItem) => cartItem.id === item.id
+          );
+          if (index !== -1) {
+            this.backendCartItems[index].quantity = updatedItem.quantity;
+          }
+        }
+      } catch (error) {
+        console.error("Error", error);
+      }
+    },
+
+    async deleteOneCartItemLocalstorage(productId: number) {
+      const guestItem = this.cartItems.find(
+        (item) => item.productId === productId
+      );
+      if (!guestItem) {
+        console.error("Guest cart item not found for product id:", productId);
+        return;
+      }
+      if (guestItem.quantity > 1) {
+        guestItem.quantity--;
+      } else {
+        console.error(
+          "Quantity is already at the minimum (1), cannot decrease further."
+        );
+      }
+      localStorage.setItem("guestCart", JSON.stringify(this.cartItems));
+    },
+
     async increaseQuantity(productId: number) {
       const item = this.allCartItems.find(
         (item) => item.productId === productId
       );
-      if (item && item.product) {
+      if (item) {
         await this.addToCart(item.product);
       } else {
         console.error("Product not found for id:", productId);
       }
     },
 
-    decreaseQuantity(productId: number) {
-      const item = this.allCartItems.find(
-        (item) => item.productId === productId
-      );
-      if (item && item.quantity > 1) {
-        item.quantity -= 1;
-        localStorage.setItem("guestCart", JSON.stringify(this.cartItems));
-      }
+    async decreaseQuantity(productId: number) {
+      const authStore = useAuthStore();
+      authStore.isAuth
+        ? await this.deleteOneItemFromCart(productId)
+        : this.deleteOneCartItemLocalstorage(productId);
     },
 
     async fetchCartItems() {
@@ -136,10 +188,7 @@ export const useCartStore = defineStore("cartStore", {
           );
           this.backendCartItems = response.data;
         } catch (error) {
-          console.error(
-            "Kullanıcı bilgileri alınırken bir hata oluştu.",
-            error
-          );
+          console.error("An error occurred while fetching cart items.", error);
         }
       }
       await this.fetchCartItemsLocalstorage();

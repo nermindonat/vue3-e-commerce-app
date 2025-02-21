@@ -40,9 +40,12 @@
               />
             </div>
             <div class="flex-1">
-              <h3 class="text-base font-medium text-gray-800 mb-4">
+              <h3 class="text-base font-medium text-gray-800 mb-2">
                 {{ item.product?.name }}
               </h3>
+              <p class="text-sm text-gray-600 mb-2">
+                Beden: {{ item.productVariant?.variantValue?.value }}
+              </p>
               <p class="text-sm text-gray-600">
                 Fiyat:
                 <span class="text-[#F27A1AFF] font-bold"
@@ -66,7 +69,9 @@
               <span class="text-lg font-medium">{{ item.quantity }}</span>
               <button
                 class="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-md hover:bg-gray-300"
-                @click.stop="clickIncreaseQuantity(item.productId)"
+                @click.stop="
+                  clickIncreaseQuantity(item.productId, item.productVariantId)
+                "
               >
                 +
               </button>
@@ -174,9 +179,10 @@ const setSelectedProduct = (id: number) => {
   }
 };
 
-const clickIncreaseQuantity = (productId: number) => {
+const clickIncreaseQuantity = (productId: number, productVariantId: number) => {
   const cartItem = cartStore.allCartItems.find(
-    (item) => item.productId === productId
+    (item) =>
+      item.productId === productId && item.productVariantId === productVariantId
   );
   if (cartItem) {
     showSucceesModal.value = true;

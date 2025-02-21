@@ -236,12 +236,14 @@ import { Icon } from "@iconify/vue";
 import { computed, onMounted, ref } from "vue";
 import { useProductsStore } from "../../stores/products";
 import { getImageUrl } from "../../utils/imageUtils";
-import { useRouter } from "vue-router";
+import { urlFormat } from "../../utils/formatters";
+import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "../../stores/auth";
 import { useFavoritesStore } from "../../stores/favorites";
 import { useCartStore } from "../../stores/cart";
 import axios from "axios";
 
+const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
 const productStore = useProductsStore();
@@ -251,6 +253,7 @@ const productDetail = ref<any>(null);
 const selectedProductId = productStore.selectedProductId;
 const showWarning = ref(false);
 const successMessage = ref(false);
+const productSlug = String(route.params.name);
 
 interface VariantValue {
   id: number;
@@ -273,10 +276,21 @@ const isFavorite = computed(() => {
   );
 });
 
-onMounted(() => {
-  if (selectedProductId) {
-    productStore
-      .fetchProductById(selectedProductId)
+// Store'daki ürün listesinden urlFormat ile eşleşen ürünü buluyoruz.
+const findProductBySlug = (slug: string) => {
+  return productStore.products?.find(
+    (product) => urlFormat(product.name) === slug
+  );
+};
+
+onMounted(async () => {
+  if (!productStore.products) {
+    await productStore.fetchAllProducts();
+  }
+  const product = findProductBySlug(productSlug);
+  if (product) {
+    await productStore
+      .fetchProductById(product.id)
       .then(() => {
         productDetail.value = productStore.productDetail;
         const variants = productDetail.value.groupedVariants;
@@ -310,7 +324,7 @@ onMounted(() => {
         console.error("An error occurred while fetching the product.", error);
       });
   } else {
-    console.error("selectedProductId not found!");
+    console.error("Product not found!");
   }
 });
 

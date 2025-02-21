@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { Product } from "./products";
+import { Product, ProductVariant } from "./products";
 import { useAuthStore } from "./auth";
 import axios from "axios";
 
@@ -10,8 +10,8 @@ interface CartItem {
   productVariantId: number;
   quantity: number;
   product: Product;
+  productVariant?: ProductVariant;
 }
-
 interface State {
   cartItems: CartItem[]; // localstorage taki verileri tutar
   backendCartItems: CartItem[]; // backend teki verileri tutar
@@ -36,25 +36,25 @@ export const useCartStore = defineStore("cartStore", {
 
     allCartItems(state): CartItem[] {
       const allItems = state.backendCartItems.concat(state.cartItems);
-      // 1. Quantity'leri product.id'ye göre grupla
+      // Ürün id ve beden değerine göre gruplama yapıyoruz.
       const groupedItems = allItems.reduce((acc, currentItem) => {
         const productId = currentItem.product?.id;
+        // Ürün varyantının beden değerini alın, örneğin currentItem.productVariant.variantValue.value
+        const variantValue =
+          currentItem.productVariant?.variantValue?.value || "";
         if (!productId) {
           return acc;
         }
-        // Eğer bu product.id daha önce eklenmemişse yeni entry oluştur
-        if (!acc[productId]) {
-          acc[productId] = { ...currentItem };
+        // Gruplama anahtarını oluşturuyoruz.
+        const key = `${productId}-${variantValue}`;
+        if (!acc[key]) {
+          acc[key] = { ...currentItem };
+        } else {
+          acc[key].quantity += currentItem.quantity;
         }
-        // Eğer product.id zaten varsa quantity'yi topla
-        else {
-          acc[productId].quantity += currentItem.quantity;
-        }
-
         return acc;
-      }, {} as { [key: string]: CartItem }); // Tip güvenliği için type assertion
+      }, {} as { [key: string]: CartItem });
 
-      // 2. Gruplanmış objeyi diziye çevir
       return Object.values(groupedItems);
     },
   },
@@ -94,7 +94,9 @@ export const useCartStore = defineStore("cartStore", {
         }
       } else {
         const existingItem = this.cartItems.find(
-          (item) => item.productId === product.id
+          (item) =>
+            item.productId === product.id &&
+            item.productVariantId === selectedVariant.id
         );
         if (existingItem) {
           existingItem.quantity += 1;
@@ -105,6 +107,7 @@ export const useCartStore = defineStore("cartStore", {
             productVariantId: selectedVariant.id,
             quantity: 1,
             product: product,
+            productVariant: selectedVariant,
           });
         }
         localStorage.setItem("guestCart", JSON.stringify(this.cartItems));

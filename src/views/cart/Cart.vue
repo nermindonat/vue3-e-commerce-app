@@ -175,11 +175,18 @@ const setSelectedProduct = (id: number) => {
 };
 
 const clickIncreaseQuantity = (productId: number) => {
-  showSucceesModal.value = true;
-  cartStore.increaseQuantity(productId);
-  setTimeout(() => {
-    showSucceesModal.value = false;
-  }, 500);
+  const cartItem = cartStore.allCartItems.find(
+    (item) => item.productId === productId
+  );
+  if (cartItem) {
+    showSucceesModal.value = true;
+    cartStore.increaseQuantity(productId, cartItem.productVariantId);
+    setTimeout(() => {
+      showSucceesModal.value = false;
+    }, 500);
+  } else {
+    console.error("Cart item not found!");
+  }
 };
 
 const clickDecreaseQuantity = (productId: number) => {

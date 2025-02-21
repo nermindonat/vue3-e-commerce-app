@@ -7,13 +7,14 @@ interface CartItem {
   id?: number;
   cartId: null | number;
   productId: number;
+  productVariantId: number;
   quantity: number;
   product: Product;
 }
 
 interface State {
-  cartItems: CartItem[];
-  backendCartItems: CartItem[];
+  cartItems: CartItem[]; // localstorage taki verileri tutar
+  backendCartItems: CartItem[]; // backend teki verileri tutar
 }
 
 export const useCartStore = defineStore("cartStore", {
@@ -59,15 +60,23 @@ export const useCartStore = defineStore("cartStore", {
   },
 
   actions: {
-    async addToCart(product: Product) {
+    async addToCart(product: Product, selectedValue: string) {
       const authStore = useAuthStore();
       const token = localStorage.getItem("access_token");
+      const selectedVariant = product.productVariants.find(
+        (variant) => variant.variantValue.value === selectedValue
+      );
+      if (!selectedVariant) {
+        console.error("Selected variant not found!");
+        return;
+      }
       if (authStore.isAuth) {
         try {
           const response = await axios.post(
             `${import.meta.env.VITE_API_BASE_URL}/cart-item`,
             {
               productId: product.id,
+              productVariantId: selectedVariant.id,
               quantity: 1,
             },
             {
@@ -93,6 +102,7 @@ export const useCartStore = defineStore("cartStore", {
           this.cartItems.push({
             cartId: null,
             productId: product.id,
+            productVariantId: selectedVariant.id,
             quantity: 1,
             product: product,
           });
@@ -101,9 +111,76 @@ export const useCartStore = defineStore("cartStore", {
       }
     },
 
+    async increaseQuantity(productId: number, productVariantId: number) {
+      const authStore = useAuthStore();
+      const token = localStorage.getItem("access_token");
+      if (authStore.isAuth) {
+        let existingCartItem = this.backendCartItems.find(
+          (item) =>
+            item.productId === productId &&
+            item.productVariantId === productVariantId
+        );
+        if (!existingCartItem) {
+          const localCartItem = this.cartItems.find(
+            (item) =>
+              item.productId === productId &&
+              item.productVariantId === productVariantId
+          );
+          if (localCartItem) {
+            const response = await axios.post(
+              `${import.meta.env.VITE_API_BASE_URL}/cart-item`,
+              {
+                productId,
+                productVariantId,
+                quantity: localCartItem.quantity,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+            existingCartItem = response.data;
+            localStorage.removeItem("guestCart");
+          } else {
+            console.error("Cart item not found in guest cart!");
+            return;
+          }
+        }
+        const response = await axios.put(
+          `${import.meta.env.VITE_API_BASE_URL}/cart-item/${
+            existingCartItem?.id
+          }/increase`,
+          {
+            quantity: 1,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (response.status === 200) {
+          await this.fetchCartItems();
+        }
+      } else {
+        const existingItem = this.cartItems.find(
+          (item) =>
+            item.productId === productId &&
+            item.productVariantId === productVariantId
+        );
+        if (existingItem) {
+          existingItem.quantity += 1;
+          localStorage.setItem("guestCart", JSON.stringify(this.cartItems));
+        } else {
+          console.error("Cart item not found!");
+        }
+      }
+    },
+
     async deleteOneItemFromCart(productId: number) {
       const token = localStorage.getItem("access_token");
-      const item = this.backendCartItems.find(
+      const item = this.allCartItems.find(
         (item) => item.productId === productId
       );
       if (!item) {
@@ -122,11 +199,20 @@ export const useCartStore = defineStore("cartStore", {
         const updatedItem = response.data;
 
         if (updatedItem.quantity < item.quantity) {
-          const index = this.backendCartItems.findIndex(
+          const index = this.allCartItems.findIndex(
             (cartItem) => cartItem.id === item.id
           );
+
           if (index !== -1) {
-            this.backendCartItems[index].quantity = updatedItem.quantity;
+            this.allCartItems[index].quantity = updatedItem.quantity;
+            if (updatedItem.quantity === 1) {
+              const index = this.cartItems.findIndex(
+                (i) => i.productId === item.productId
+              );
+              if (index > -1) {
+                this.cartItems.splice(index, 1);
+              }
+            }
           }
         }
       } catch (error) {
@@ -150,17 +236,6 @@ export const useCartStore = defineStore("cartStore", {
         );
       }
       localStorage.setItem("guestCart", JSON.stringify(this.cartItems));
-    },
-
-    async increaseQuantity(productId: number) {
-      const item = this.allCartItems.find(
-        (item) => item.productId === productId
-      );
-      if (item) {
-        await this.addToCart(item.product);
-      } else {
-        console.error("Product not found for id:", productId);
-      }
     },
 
     async decreaseQuantity(productId: number) {

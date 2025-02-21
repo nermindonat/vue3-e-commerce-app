@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="open"
-    class="absolute top-0 left-0 right-0 bottom-0 bg-[#1616164d] z-50 flex justify-center items-center h-full"
+    class="fixed top-0 left-0 right-0 bottom-0 bg-[#1616164d] z-50 flex justify-center items-center h-full"
   >
     <div class="overflow-x-hidden overflow-y-auto min-w-[360px]">
       <div class="relative w-full h-full max-w-md md:h-auto">

@@ -314,8 +314,8 @@ onMounted(() => {
   }
 });
 
-const setSelectedValue = (size: string) => {
-  selectedValue.value = size;
+const setSelectedValue = (value: string) => {
+  selectedValue.value = value;
 };
 
 const addFavorites = async () => {
@@ -355,12 +355,10 @@ const addToCartClick = () => {
   if (!selectedValue.value) {
     showWarning.value = true;
   } else {
-    cartStore.addToCart({
-      ...productDetail.value,
-    });
-    selectedValue.value = "";
+    cartStore.addToCart(productDetail.value, selectedValue.value);
     successMessage.value = true;
     setTimeout(() => {
+      selectedValue.value = "";
       successMessage.value = false;
     }, 2000);
   }

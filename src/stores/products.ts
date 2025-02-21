@@ -1,11 +1,33 @@
 import axios from "axios";
 import { defineStore } from "pinia";
 
+// Variant ile ilgili arayüz
+export interface Variant {
+  id: number;
+  name: string;
+}
+
+// VariantValue arayüzü, varyantın değerini tutar (örneğin "M", "L")
+export interface VariantValue {
+  id: number;
+  value: string;
+  variant: Variant;
+}
+
+// Ürün varyantı bilgileri
+export interface ProductVariant {
+  id: number;
+  productId: number;
+  variantValueId: number;
+  variantValue: VariantValue;
+}
+
 export interface Product {
   id: number;
   name: string;
   price: number;
   image: string;
+  productVariants: ProductVariant[];
 }
 
 interface State {

@@ -43,7 +43,10 @@
               <h3 class="text-base font-medium text-gray-800 mb-2">
                 {{ item.product?.name }}
               </h3>
-              <p class="text-sm text-gray-600 mb-2">
+              <p
+                v-if="item.productVariant?.variantValue?.value"
+                class="text-sm text-gray-600 mb-2"
+              >
                 Beden: {{ item.productVariant?.variantValue?.value }}
               </p>
               <p class="text-sm text-gray-600">
@@ -56,7 +59,9 @@
             <div class="flex items-center gap-2 mr-5">
               <button
                 class="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-md hover:bg-gray-300 cursor-pointer disabled:bg-gray-100 disabled:opacity-50"
-                @click.stop="clickDecreaseQuantity(item.productId)"
+                @click.stop="
+                  clickDecreaseQuantity(item.productId, item.productVariantId)
+                "
                 :disabled="item.quantity === 1"
                 :title="
                   item.quantity === 1
@@ -195,9 +200,9 @@ const clickIncreaseQuantity = (productId: number, productVariantId: number) => {
   }
 };
 
-const clickDecreaseQuantity = (productId: number) => {
+const clickDecreaseQuantity = (productId: number, productVariantId: number) => {
   showSucceesModal.value = true;
-  cartStore.decreaseQuantity(productId);
+  cartStore.decreaseQuantity(productId, productVariantId);
   setTimeout(() => {
     showSucceesModal.value = false;
   }, 500);

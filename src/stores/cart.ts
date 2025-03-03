@@ -63,26 +63,35 @@ export const useCartStore = defineStore("cartStore", {
     async addToCart(product: Product, selectedValue: string) {
       const authStore = useAuthStore();
       const token = localStorage.getItem("access_token");
-      const selectedVariant = product.productVariants.find(
-        (variant) => variant.variantValue.value === selectedValue
-      );
-      if (!selectedVariant) {
-        console.error("Selected variant not found!");
-        return;
+      // Varyant varsa, seçilen varyantı al, yoksa productVariantId null olarak gönder
+      let productVariantId = null;
+      let selectedVariant = null;
+
+      if (product.productVariants && product.productVariants.length > 0) {
+        selectedVariant = product.productVariants.find(
+          (variant) => variant.variantValue.value === selectedValue
+        );
+        if (!selectedVariant) {
+          console.error("Selected variant not found!");
+          return;
+        }
+        productVariantId = selectedVariant.id;
       }
+      // Sepete ekleme için ortak veri yapısı
+      const cartData = {
+        productId: product.id,
+        productVariantId,
+        quantity: 1,
+      };
+
+      // Kullanıcı giriş yapmışsa API üzerinden sepete ekle, değilse localStorage a ekle
       if (authStore.isAuth) {
         try {
           const response = await axios.post(
             `${import.meta.env.VITE_API_BASE_URL}/cart-item`,
+            cartData,
             {
-              productId: product.id,
-              productVariantId: selectedVariant.id,
-              quantity: 1,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
+              headers: { Authorization: `Bearer ${token}` },
             }
           );
           if (response.status === 201) {
@@ -96,7 +105,7 @@ export const useCartStore = defineStore("cartStore", {
         const existingItem = this.cartItems.find(
           (item) =>
             item.productId === product.id &&
-            item.productVariantId === selectedVariant.id
+            item.productVariantId === productVariantId
         );
         if (existingItem) {
           existingItem.quantity += 1;
@@ -104,7 +113,7 @@ export const useCartStore = defineStore("cartStore", {
           this.cartItems.push({
             cartId: null,
             productId: product.id,
-            productVariantId: selectedVariant.id,
+            productVariantId,
             quantity: 1,
             product: product,
             productVariant: selectedVariant,
@@ -144,7 +153,12 @@ export const useCartStore = defineStore("cartStore", {
               }
             );
             existingCartItem = response.data;
-            localStorage.removeItem("guestCart");
+            this.cartItems = this.cartItems.filter(
+              (item) =>
+                item.productId !== productId ||
+                item.productVariantId !== productVariantId
+            );
+            localStorage.setItem("guestCart", JSON.stringify(this.cartItems));
           } else {
             console.error("Cart item not found in guest cart!");
             return;
@@ -181,18 +195,29 @@ export const useCartStore = defineStore("cartStore", {
       }
     },
 
-    async deleteOneItemFromCart(productId: number) {
+    async deleteOneItemFromCart(productId: number, productVariantId: number) {
       const token = localStorage.getItem("access_token");
+      if (!token) {
+        console.error("User is not authenticated.");
+        return;
+      }
       const item = this.allCartItems.find(
-        (item) => item.productId === productId
+        (item) =>
+          item.productId === productId &&
+          item.productVariantId === productVariantId
       );
       if (!item) {
-        console.error("Cart item not found for product id:", productId);
+        console.error(
+          "Cart item not found for product id:",
+          productId,
+          "and variant id:",
+          productVariantId
+        );
         return;
       }
       try {
         const response = await axios.delete(
-          `${import.meta.env.VITE_API_BASE_URL}/cart-item/one/${item.id}`,
+          `${import.meta.env.VITE_API_BASE_URL}/cart-item/${item.id}/decrease`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -200,52 +225,67 @@ export const useCartStore = defineStore("cartStore", {
           }
         );
         const updatedItem = response.data;
-
-        if (updatedItem.quantity < item.quantity) {
-          const index = this.allCartItems.findIndex(
-            (cartItem) => cartItem.id === item.id
-          );
-
-          if (index !== -1) {
+        await this.fetchCartItems();
+        const index = this.allCartItems.findIndex(
+          (cartItem) => cartItem.id === item.id
+        );
+        if (index !== -1) {
+          if (updatedItem.quantity > 0) {
             this.allCartItems[index].quantity = updatedItem.quantity;
-            if (updatedItem.quantity === 1) {
-              const index = this.cartItems.findIndex(
-                (i) => i.productId === item.productId
-              );
-              if (index > -1) {
-                this.cartItems.splice(index, 1);
-              }
-            }
+          } else {
+            this.allCartItems.splice(index, 1);
           }
         }
       } catch (error) {
-        console.error("Error", error);
+        console.error("Error:", error);
       }
     },
 
-    async deleteOneCartItemLocalstorage(productId: number) {
+    async deleteOneCartItemLocalstorage(
+      productId: number,
+      productVariantId: number
+    ) {
       const guestItem = this.cartItems.find(
-        (item) => item.productId === productId
+        (item) =>
+          item.productId === productId &&
+          item.productVariantId === productVariantId
       );
       if (!guestItem) {
-        console.error("Guest cart item not found for product id:", productId);
+        console.error(
+          "Guest cart item not found for product id:",
+          productId,
+          "and variant id:",
+          productVariantId
+        );
         return;
       }
+
       if (guestItem.quantity > 1) {
         guestItem.quantity--;
       } else {
-        console.error(
-          "Quantity is already at the minimum (1), cannot decrease further."
+        const index = this.cartItems.findIndex(
+          (item) =>
+            item.productId === productId &&
+            item.productVariantId === productVariantId
         );
+        if (index > -1) {
+          this.cartItems.splice(index, 1);
+        }
       }
-      localStorage.setItem("guestCart", JSON.stringify(this.cartItems));
+      try {
+        localStorage.setItem("guestCart", JSON.stringify(this.cartItems));
+      } catch (error) {
+        console.error("Error updating localStorage:", error);
+      }
     },
 
-    async decreaseQuantity(productId: number) {
+    async decreaseQuantity(productId: number, productVariantId: number) {
       const authStore = useAuthStore();
-      authStore.isAuth
-        ? await this.deleteOneItemFromCart(productId)
-        : this.deleteOneCartItemLocalstorage(productId);
+      if (authStore.isAuth) {
+        await this.deleteOneItemFromCart(productId, productVariantId);
+      } else {
+        this.deleteOneCartItemLocalstorage(productId, productVariantId);
+      }
     },
 
     async fetchCartItems() {

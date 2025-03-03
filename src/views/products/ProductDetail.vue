@@ -366,15 +366,18 @@ const addFavorites = async () => {
 };
 
 const addToCartClick = () => {
-  if (!selectedValue.value) {
+  productDetail.value = productStore.productDetail;
+  const variants = productDetail.value.groupedVariants;
+  // Eğer ürünün varyantları varsa ve selectedValue seçilmemişse uyarı göster
+  if (Object.keys(variants).length > 0 && !selectedValue.value) {
     showWarning.value = true;
   } else {
     cartStore.addToCart(productDetail.value, selectedValue.value);
     successMessage.value = true;
+    selectedValue.value = "";
     setTimeout(() => {
-      selectedValue.value = "";
       successMessage.value = false;
-    }, 2000);
+    }, 1000);
   }
 };
 

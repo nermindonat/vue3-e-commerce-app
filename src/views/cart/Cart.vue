@@ -99,7 +99,9 @@
         <h3 class="text-lg font-bold mb-5">Sipariş Özeti</h3>
         <div class="flex justify-between mb-4">
           <span class="text-sm text-gray-600">Ürünün Toplamı:</span>
-          <span class="text-sm font-medium text-gray-800"> TL</span>
+          <span class="text-sm font-medium text-gray-800"
+            >{{ totalPrice.toLocaleString("tr-TR") }} TL</span
+          >
         </div>
         <div class="flex justify-between mb-4">
           <span class="text-sm text-gray-600">Kargo Toplam:</span>
@@ -108,7 +110,9 @@
         <hr class="my-4" />
         <div class="flex justify-between mb-4">
           <span class="text-base font-bold">Toplam:</span>
-          <span class="text-base font-bold text-[#F27A1AFF]"> TL</span>
+          <span class="text-base font-bold text-[#F27A1AFF]"
+            >{{ totalPrice.toLocaleString("tr-TR") }} TL</span
+          >
         </div>
         <button
           class="w-full bg-[#F27A1AFF] text-white font-semibold py-2 rounded-md hover:bg-orange-400"
@@ -122,7 +126,7 @@
             @close="closeModal"
             @loginOrSignUp="handleLoginOrSignUp"
             @continueWithoutSignUp="handleContinueWithoutSignUp"
-          ></WarningModal>
+          />
         </div>
       </div>
     </div>
@@ -214,7 +218,7 @@ const clickStartShopping = () => {
 
 const clickConfirmCart = () => {
   if (authStore.isAuth) {
-    console.log("Ödeme aşaması");
+    router.push("/sepetim/odeme");
   } else {
     showWarningModal.value = true;
   }
@@ -232,6 +236,14 @@ const handleLoginOrSignUp = () => {
 const handleContinueWithoutSignUp = () => {
   showWarningModal.value = false;
 };
+
+// Ürünün toplamı
+const totalPrice = computed(() => {
+  return cartStore.allCartItems.reduce((acc, item) => {
+    const price = item.product?.price || 0;
+    return acc + price * item.quantity;
+  }, 0);
+});
 
 onMounted(async () => {
   await cartStore.fetchCartItems();

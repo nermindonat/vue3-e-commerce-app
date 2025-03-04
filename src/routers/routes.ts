@@ -16,6 +16,7 @@ import Favorite from "../views/Favorite.vue";
 import ForgotPassword from "../views/auth/ForgotPassword.vue";
 import ResetPassword from "../views/auth/ResetPassword.vue";
 import Cart from "../views/cart/Cart.vue";
+import Payment from "../views/payment/Payment.vue";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -77,6 +78,11 @@ const routes: RouteRecordRaw[] = [
     path: "/sepet",
     name: "Cart",
     component: Cart,
+  },
+  {
+    path: "/sepetim/odeme",
+    name: "Payment",
+    component: Payment,
   },
 ];
 

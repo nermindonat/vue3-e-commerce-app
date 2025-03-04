@@ -17,12 +17,18 @@ import ForgotPassword from "../views/auth/ForgotPassword.vue";
 import ResetPassword from "../views/auth/ResetPassword.vue";
 import Cart from "../views/cart/Cart.vue";
 import Payment from "../views/payment/Payment.vue";
+import Account from "../views/account/Account.vue";
 
 const routes: RouteRecordRaw[] = [
   {
     path: "/",
     name: "Home",
     component: Home,
+  },
+  {
+    path: "/hesabim",
+    name: "Account",
+    component: Account,
   },
   {
     path: "/giris-yap",

@@ -25,10 +25,10 @@
           class="flex flex-col text-sm font-semibold leading-4"
           @mouseenter="showDropdown = true"
         >
-          <span class="font-medium text-xs">Hesabım</span>
-          <span class="text-sm"
-            >{{ authStore.user?.name }} {{ authStore.user?.surname }}</span
-          >
+          <router-link to="/hesabim" class="flex flex-col">
+            <span class="font-medium text-xs">Hesabım</span>
+            <span class="text-sm">{{ authStore.user?.name }} {{ authStore.user?.surname }}</span>
+          </router-link>
           <div
             v-if="showDropdown"
             class="max-w-[170px] absolute flex flex-col bg-white shadow-md border border-gray-300 rounded-lg p-4 mt-10 cursor-pointer"

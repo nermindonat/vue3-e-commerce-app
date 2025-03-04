@@ -21,12 +21,14 @@
 -----------------
 
 # Product Detail Page
-![image](https://github.com/user-attachments/assets/b359f08c-db0d-470c-8e57-5d2f6703769c)
+![image](https://github.com/user-attachments/assets/2b1bdb86-abb9-44e5-bce7-43cb0afd82e2)
 
 ----------------
 
 # Favorite Products Page
 ![image](https://github.com/user-attachments/assets/a94f46c2-2c29-4a40-8063-8b9446e970f8)
+
+----------------
 
 # Cart Page
 ![image](https://github.com/user-attachments/assets/e0bd1472-e536-405d-89b1-21c5e9e92c82)

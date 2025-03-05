@@ -198,7 +198,7 @@ export const useCartStore = defineStore("cartStore", {
     async deleteOneItemFromCart(productId: number, productVariantId: number) {
       const token = localStorage.getItem("access_token");
       if (!token) {
-        console.error("User is not authenticated.");
+        console.error("Customer is not authenticated.");
         return;
       }
       const item = this.allCartItems.find(

@@ -7,88 +7,78 @@ import {
 import Home from "../views/Home.vue";
 import Login from "../views/auth/Login.vue";
 import Register from "../views/auth/Register.vue";
-import MyOrders from "../views/MyOrders.vue";
-import MyReviews from "../views/MyReviews.vue";
-import MyDiscountCoupons from "../views/MyDiscountCoupons.vue";
-import MyUserInformation from "../views/MyUserInformation.vue";
 import ProductDetail from "../views/products/ProductDetail.vue";
 import Favorite from "../views/Favorite.vue";
 import ForgotPassword from "../views/auth/ForgotPassword.vue";
 import ResetPassword from "../views/auth/ResetPassword.vue";
 import Cart from "../views/cart/Cart.vue";
 import Payment from "../views/payment/Payment.vue";
-import Account from "../views/account/Account.vue";
 
 const routes: RouteRecordRaw[] = [
   {
     path: "/",
-    name: "Home",
+    name: "home",
     component: Home,
   },
   {
-    path: "/hesabim",
-    name: "Account",
-    component: Account,
-  },
-  {
     path: "/giris-yap",
-    name: "Login",
+    name: "login",
     component: Login,
   },
   {
     path: "/uye-ol",
-    name: "Register",
+    name: "register",
     component: Register,
   },
   {
-    path: "/siparislerim",
-    name: "Orders",
-    component: MyOrders,
-  },
-  {
-    path: "/degerlendirmelerim",
-    name: "Reviews",
-    component: MyReviews,
-  },
-  {
-    path: "/indirim-kuponlarim",
-    name: "Discount Coupons",
-    component: MyDiscountCoupons,
-  },
-  {
-    path: "/kullanici-bilgilerim",
-    name: "User Information",
-    component: MyUserInformation,
-  },
-  {
     path: "/urun/:name",
-    name: "Product Detail",
+    name: "product-detail",
     component: ProductDetail,
   },
   {
     path: "/favorilerim",
-    name: "Favorite",
+    name: "favorite",
     component: Favorite,
   },
   {
     path: "/sifremi-unuttum",
-    name: "Forgot Password",
+    name: "forgot-password",
     component: ForgotPassword,
   },
   {
     path: "/yeni-sifre-olustur",
-    name: "Reset Password",
+    name: "reset-password",
     component: ResetPassword,
   },
   {
     path: "/sepet",
-    name: "Cart",
+    name: "cart",
     component: Cart,
   },
   {
     path: "/sepetim/odeme",
-    name: "Payment",
+    name: "payment",
     component: Payment,
+  },
+  {
+    path: "/hesabim",
+    component: () => import("../views/account/Account.vue"),
+    children: [
+      {
+        path: "",
+        redirect: "/hesabim/kullanici-bilgileri",
+      },
+      {
+        path: "kullanici-bilgileri",
+        name: "profile",
+        component: () => import("../views/account/Profile.vue"),
+      },
+      {
+        path: "adres-bilgileri",
+        name: "addresses",
+        component: () => import("../views/account/Addresses.vue"),
+      },
+    ],
   },
 ];
 

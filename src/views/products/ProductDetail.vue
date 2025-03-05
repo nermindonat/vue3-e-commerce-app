@@ -339,14 +339,14 @@ const addFavorites = async () => {
   if (authStore.isAuth) {
     try {
       const productId = productDetail.value.id;
-      const userId = authStore.user?.id;
+      const customerId = authStore.customer?.id;
       const token = localStorage.getItem("access_token");
 
       const response = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/favorites`,
         {
           productId,
-          userId,
+          customerId,
         },
         {
           headers: {

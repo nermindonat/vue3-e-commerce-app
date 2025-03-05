@@ -7,53 +7,8 @@
         <p class="mt-2 text-gray-600">Siparişinizi tamamlamak için ödeme bilgilerinizi giriniz</p>
       </div>
 
-      <!-- Payment Options Tabs -->
-      <div class="mb-8">
-        <div class="grid grid-cols-2 gap-4">
-          <!-- Credit Card Tab -->
-          <div 
-            @click="activeTab = 'credit-card'"
-            :class="[
-              'cursor-pointer rounded-lg p-4 text-center border transition-all duration-200',
-              activeTab === 'credit-card' 
-                ? 'bg-white border-indigo-500 shadow-md' 
-                : 'bg-gray-50 border-gray-200 hover:border-gray-300'
-            ]"
-          >
-            <h3 class="text-lg font-medium" :class="[
-              activeTab === 'credit-card' ? 'text-indigo-600' : 'text-gray-700'
-            ]">
-              Banka/Kredi Kartı
-            </h3>
-            <p class="mt-1 text-sm text-gray-500">
-              ile ödemenizi güvenle yapabilirsiniz.
-            </p>
-          </div>
-
-          <!-- Shopping Credit Tab -->
-          <div 
-            @click="activeTab = 'shopping-credit'"
-            :class="[
-              'cursor-pointer rounded-lg p-4 text-center border transition-all duration-200',
-              activeTab === 'shopping-credit' 
-                ? 'bg-white border-indigo-500 shadow-md' 
-                : 'bg-gray-50 border-gray-200 hover:border-gray-300'
-            ]"
-          >
-            <h3 class="text-lg font-medium" :class="[
-              activeTab === 'shopping-credit' ? 'text-indigo-600' : 'text-gray-700'
-            ]">
-              Alışveriş Kredisi
-            </h3>
-            <p class="mt-1 text-sm text-gray-500">
-              ile ödemenizi güvenle yapabilirsiniz.
-            </p>
-          </div>
-        </div>
-      </div>
-
       <!-- Payment Form -->
-      <div v-if="activeTab === 'credit-card'" class="bg-white rounded-lg shadow-lg p-6">
+      <div class="bg-white rounded-lg shadow-lg p-6">
         <form @submit.prevent="handleSubmit" class="space-y-6">
           <!-- Card Information -->
           <div class="space-y-4">
@@ -143,14 +98,6 @@
         </form>
       </div>
 
-      <!-- Shopping Credit Form -->
-      <div v-if="activeTab === 'shopping-credit'" class="bg-white rounded-lg shadow-lg p-6">
-        <div class="text-center py-8">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Alışveriş Kredisi</h2>
-          <p class="text-gray-600">Bu ödeme yöntemi için bankalarla görüşme sağlanacaktır.</p>
-        </div>
-      </div>
-
       <!-- Security Info -->
       <div class="mt-6 text-center">
         <p class="text-sm text-gray-500">
@@ -167,7 +114,6 @@
 <script setup>
 import { ref } from 'vue'
 
-const activeTab = ref('credit-card')
 const cardNumber = ref('')
 const expiryDate = ref('')
 const cvv = ref('')

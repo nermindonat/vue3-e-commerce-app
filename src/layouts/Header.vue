@@ -25,9 +25,9 @@
           class="flex flex-col text-sm font-semibold leading-4"
           @mouseenter="showDropdown = true"
         >
-          <router-link to="/hesabim" class="flex flex-col">
+          <router-link to="/hesabim/kullanici-bilgileri" class="flex flex-col">
             <span class="font-medium text-xs">Hesabım</span>
-            <span class="text-sm">{{ authStore.user?.name }} {{ authStore.user?.surname }}</span>
+            <span class="text-sm">{{ authStore.customer?.name }} {{ authStore.customer?.surname }}</span>
           </router-link>
           <div
             v-if="showDropdown"
@@ -49,7 +49,7 @@
             <p
               class="text-red-400 mb-2 border-b-2 pb-2 overflow-hidden whitespace-nowrap text-ellipsis"
             >
-              {{ authStore.user?.email }}
+              {{ authStore.customer?.email }}
             </p>
             <div class="flex flex-row items-center mb-2 hover:text-[#f27a1a]">
               <Icon icon="lsicon:order-outline" />
@@ -81,7 +81,7 @@
             <div class="flex flex-row items-center mb-2 hover:text-[#f27a1a]">
               <Icon icon="tdesign:user" />
               <router-link
-                to="/kullanici-bilgilerim"
+                to="/hesabim/kullanici-bilgileri"
                 class="block text-xs py-1 ml-2"
                 @click="showDropdown = false"
                 >Kullanıcı Bilgilerim</router-link

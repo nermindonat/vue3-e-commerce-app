@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import axios from "axios";
 
-interface User {
+interface Customer  {
   id: number;
   name: string;
   surname: string;
@@ -10,12 +10,12 @@ interface User {
 }
 
 export const useAuthStore = defineStore("authStore", () => {
-  const user = ref<User | null>(null);
+  const customer = ref<Customer | null>(null);
   const errorMessage = ref<string | null>(null);
-  const isAuth = computed(() => !!user.value);
+  const isAuth = computed(() => !!customer.value);
 
-  function setAuth(userInfo: User, token: string) {
-    user.value = userInfo;
+  function setAuth(customerInfo: Customer, token: string) {
+    customer.value = customerInfo;
     localStorage.setItem("access_token", token);
   }
 
@@ -31,9 +31,9 @@ export const useAuthStore = defineStore("authStore", () => {
       const token = response.data.token;
 
       if (token) {
-        await fetchUserInfo(token);
-        if (user.value) {
-          setAuth(user.value, token);
+        await fetchCustomerInfo(token);
+        if (customer.value) {
+          setAuth(customer.value, token);
         }
       }
       return response.data;
@@ -43,20 +43,20 @@ export const useAuthStore = defineStore("authStore", () => {
     }
   }
 
-  async function fetchUserInfo(token: string) {
+  async function fetchCustomerInfo(token: string) {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/user/user-detail`,
+        `${import.meta.env.VITE_API_BASE_URL}/customer/customer-detail`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      user.value = response.data;
+      customer.value = response.data;
     } catch (error) {
       console.error(
-        "An error occurred while fetching user information.",
+        "An error occurred while fetching customer information.",
         error
       );
     }
@@ -65,13 +65,13 @@ export const useAuthStore = defineStore("authStore", () => {
   function logout() {
     localStorage.removeItem("access_token");
     localStorage.removeItem("guestCart");
-    user.value = null;
+    customer.value = null;
   }
 
   function checkAuth() {
     const token = localStorage.getItem("access_token");
     if (token) {
-      fetchUserInfo(token);
+      fetchCustomerInfo(token);
     }
   }
 
@@ -91,7 +91,7 @@ export const useAuthStore = defineStore("authStore", () => {
     } catch (error: any) {
       if (
         error.response &&
-        error.response.data.message === "User with this email already exists"
+        error.response.data.message === "Customer with this email already exists"
       ) {
         errorMessage.value = "Bu e-posta adresiyle zaten bir hesap mevcut.";
       }
@@ -105,7 +105,7 @@ export const useAuthStore = defineStore("authStore", () => {
 
   return {
     isAuth,
-    user,
+    customer,
     login,
     setAuth,
     logout,

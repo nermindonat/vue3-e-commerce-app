@@ -76,7 +76,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: "adres-bilgileri",
         name: "addresses",
-        component: () => import("../views/account/Addresses.vue"),
+        component: () => import("../views/account/addresses/Addresses.vue"),
       },
     ],
   },

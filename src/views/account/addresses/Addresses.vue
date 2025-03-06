@@ -51,9 +51,13 @@
       </div>
     </div>
   </div>
+
+  <AddEditModal v-if="showAddEditModal" @close="showAddEditModal = false"
+  />
 </template>
 
 <script setup lang="ts">
+import AddEditModal from "./AddEditModal.vue"
 import { ref } from 'vue'
 import { Icon } from '@iconify/vue'
 
@@ -67,6 +71,8 @@ interface Address {
   postalCode: string
   phone: string
 }
+
+const showAddEditModal = ref(false)
 
 const addresses = ref<Address[]>([
   {
@@ -82,7 +88,7 @@ const addresses = ref<Address[]>([
 ])
 
 const openNewAddressModal = () => {
-  console.log('Opening new address modal')
+  showAddEditModal.value = true
 }
 
 const editAddress = (address: Address) => {

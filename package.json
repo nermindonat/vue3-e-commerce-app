@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vee-validate/yup": "^4.15.0",
     "axios": "^1.7.7",
     "pinia": "^2.2.4",
     "vee-validate": "^4.14.3",

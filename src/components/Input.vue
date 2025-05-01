@@ -7,6 +7,7 @@
         :name="name"
         :type="isVisible ? 'text' : type"
         class="block w-full p-2 h-[40px] text-sm text-gray-900 border border-gray-300 rounded-md bg-gray-50"
+        :class="inputClass"
         :placeholder="placeholder"
         v-model="value"
         :disabled="disabled"
@@ -79,11 +80,12 @@ export interface IProps {
   label?: string;
   name: string;
   placeholder?: string;
-  type?: "text" | "email" | "password" | "number" | "tel";
+  type?: "text" | "email" | "password" | "number" | "tel" | "textarea";
   disabled?: boolean;
   errorMessage?: string;
   required?: boolean;
   wrapperClass?: HTMLAttributes["class"];
+  inputClass?: HTMLAttributes["class"];
   progress?: boolean;
 }
 

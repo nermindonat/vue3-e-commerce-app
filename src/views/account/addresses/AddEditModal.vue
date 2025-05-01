@@ -28,110 +28,92 @@
               </svg>
             </button>
           </div>
-          <div class="px-6 py-4">
-            <div class="space-y-4">
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1"
-                    >Ad*</label
-                  >
-                  <input
-                    type="text"
+          <form @submit.prevent="submitHandler">
+            <div class="px-6 py-4">
+              <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                  <Input
+                    name="name"
+                    label="Ad"
+                    v-model="name"
+                    :errorMessage="nameError"
                     placeholder="Adınızı Giriniz"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500"
+                    required
                   />
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1"
-                    >Soyad*</label
-                  >
-                  <input
-                    type="text"
+                  <Input
+                    name="surname"
+                    label="Soyad"
+                    v-model="surname"
+                    :errorMessage="surnameError"
                     placeholder="Soyadınızı Giriniz"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500"
+                    required
                   />
                 </div>
-              </div>
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1"
-                    >Telefon*</label
-                  >
-                  <input
-                    type="tel"
-                    placeholder="0(___) ___ __ __"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500"
+                <div class="grid grid-cols-2 gap-4">
+                  <Input
+                    name="phone"
+                    label="Telefon"
+                    v-model="phone"
+                    :errorMessage="phoneError"
+                    placeholder="0 (___) ___ __ __"
+                    required
+                  />
+                  <Select
+                    name="city"
+                    label="İl"
+                    :options="props.cities"
+                    v-model="city"
+                    @update:modelValue="selectCityHandler"
+                    :errorMessage="cityError"
+                    required
                   />
                 </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1"
-                    >İl*</label
-                  >
-                  <select
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500"
-                  >
-                    <option value="">Seçiniz</option>
-                  </select>
+                <div class="grid grid-cols-2 gap-4">
+                  <Select
+                    name="district"
+                    label="İlçe"
+                    v-model="district"
+                    :options="districts"
+                    :errorMessage="districtError"
+                    required
+                  />
+                  <Select
+                    name="neighborhood"
+                    label="Mahalle"
+                    v-model="neighborhood"
+                    :options="neighborhoods"
+                    :errorMessage="neighborhoodError"
+                    required
+                  />
                 </div>
-              </div>
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1"
-                    >İlçe*</label
-                  >
-                  <select
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500"
-                  >
-                    <option value="">Seçiniz</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1"
-                    >Mahalle*</label
-                  >
-                  <select
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500"
-                  >
-                    <option value="">Seçiniz</option>
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1"
-                  >Adres*</label
-                >
-                <div class="text-xs text-gray-500 mb-2">
-                  Kargonuzun size sorunsuz bir şekilde ulaşabilmesi için
-                  mahalle, cadde, sokak, bina gibi detay bilgileri eksiksiz
-                  girdiğinizden emin olun.
-                </div>
-                <textarea
-                  rows="3"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500"
+                <Textarea
+                  name="address"
+                  label="Adres"
+                  v-model="address"
+                  :errorMessage="addressError"
                   placeholder="Cadde, mahalle sokak ve diğer bilgileri giriniz."
-                ></textarea>
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1"
-                  >Adres Başlığı*</label
-                >
-                <input
-                  type="text"
+                  required
+                />
+                <Input
+                  name="addressTitle"
+                  label="Adres Başlığı"
+                  v-model="addressTitle"
+                  :errorMessage="addressTitleError"
                   placeholder="Adres Başlığı Giriniz"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500"
+                  required
                 />
               </div>
             </div>
-          </div>
-          <div
-            class="sticky bottom-0 bg-white border-t border-gray-200 px-6 py-4"
-          >
-            <button
-              class="w-full bg-orange-500 text-white py-2 px-4 rounded-md hover:bg-orange-600 transition-colors"
+            <div
+              class="sticky bottom-0 bg-white border-t border-gray-200 px-6 py-4"
             >
-              Kaydet
-            </button>
-          </div>
+              <button
+                class="w-full bg-orange-500 text-white py-2 px-4 rounded-md hover:bg-orange-600 transition-colors"
+              >
+                Kaydet
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -139,5 +121,80 @@
 </template>
 
 <script setup lang="ts">
+import axios from "axios";
+import * as yup from "yup";
+import { useField, useForm } from "vee-validate";
+import Input from "../../../components/Input.vue";
+import Select from "../../../components/Select.vue";
+import Textarea from "../../../components/Textarea.vue";
+import { Option } from "../../../types";
+import { ref, watch } from "vue";
+
+interface IProps {
+  cities: Option[];
+}
+const props = defineProps<IProps>();
+
 defineEmits(["close"]);
+
+interface District {
+  id: number;
+  name: string;
+  cityId: number;
+}
+
+const districts = ref<Option[]>([]);
+const selectedCityId = ref<number | null>(null);
+
+const validationSchema = yup.object({
+  name: yup.string().required("Ad alanı zorunludur"),
+  surname: yup.string().required("Soyad alanı zorunludur"),
+  phone: yup.string().required("Telefon alanı zorunludur"),
+  city: yup.string().required("Şehir seçimi zorunludur"),
+  district: yup.string().required("Şehir seçimi zorunludur"),
+  neighborhood: yup.string().required("Şehir seçimi zorunludur"),
+  address: yup.string().required("Adres alanı zorunludur"),
+  addressTitle: yup.string().required("Adres başlığı alanı zorunludur"),
+});
+
+const form = useForm({ validationSchema });
+const { value: name, errorMessage: nameError } = useField("name");
+const { value: surname, errorMessage: surnameError } = useField("surname");
+const { value: phone, errorMessage: phoneError } = useField("phone");
+const { value: city, errorMessage: cityError } = useField("city");
+const { value: district, errorMessage: districtError } = useField("district");
+const { value: neighborhood, errorMessage: neighborhoodError } =
+  useField("neighborhood");
+const { value: address, errorMessage: addressError } = useField("address");
+const { value: addressTitle, errorMessage: addressTitleError } =
+  useField("addressTitle");
+
+const selectCityHandler = (v: number) => {
+  selectedCityId.value = v;
+};
+
+const fetchDistricts = async (cityId: number) => {
+  try {
+    const response = await axios.get(
+      `${import.meta.env.VITE_API_BASE_URL}/districts/city/${cityId}`
+    );
+    districts.value = response.data.map((district: District) => ({
+      value: district.id,
+      label: district.name,
+    }));
+  } catch (error) {
+    console.error("İlçe bilgileri alınamadı:", error);
+    districts.value = [];
+  }
+};
+
+watch(selectedCityId, (newCityId) => {
+  if (newCityId) {
+    fetchDistricts(newCityId);
+  }
+});
+
+const submitHandler = form.handleSubmit((values) => {
+  console.log("values:", values);
+});
 </script>

@@ -74,15 +74,16 @@
                     label="İlçe"
                     v-model="district"
                     :options="districts"
+                    @update:modelValue="selectDistrictHandler"
                     :errorMessage="districtError"
                     required
                   />
                   <Select
-                    name="neighborhood"
+                    name="neighbourhood"
                     label="Mahalle"
-                    v-model="neighborhood"
-                    :options="neighborhoods"
-                    :errorMessage="neighborhoodError"
+                    v-model="neighbourhood"
+                    :options="neighbourhoods"
+                    :errorMessage="neighbourhoodError"
                     required
                   />
                 </div>
@@ -143,8 +144,16 @@ interface District {
   cityId: number;
 }
 
+interface Neighbourhood {
+  id: number;
+  name: string;
+  districtId: number;
+}
+
 const districts = ref<Option[]>([]);
+const neighbourhoods = ref<Option[]>([]);
 const selectedCityId = ref<number | null>(null);
+const selectedDistrictId = ref<number | null>(null);
 
 const validationSchema = yup.object({
   name: yup.string().required("Ad alanı zorunludur"),
@@ -152,7 +161,7 @@ const validationSchema = yup.object({
   phone: yup.string().required("Telefon alanı zorunludur"),
   city: yup.string().required("Şehir seçimi zorunludur"),
   district: yup.string().required("Şehir seçimi zorunludur"),
-  neighborhood: yup.string().required("Şehir seçimi zorunludur"),
+  neighbourhood: yup.string().required("Şehir seçimi zorunludur"),
   address: yup.string().required("Adres alanı zorunludur"),
   addressTitle: yup.string().required("Adres başlığı alanı zorunludur"),
 });
@@ -163,14 +172,19 @@ const { value: surname, errorMessage: surnameError } = useField("surname");
 const { value: phone, errorMessage: phoneError } = useField("phone");
 const { value: city, errorMessage: cityError } = useField("city");
 const { value: district, errorMessage: districtError } = useField("district");
-const { value: neighborhood, errorMessage: neighborhoodError } =
-  useField("neighborhood");
+const { value: neighbourhood, errorMessage: neighbourhoodError } =
+  useField("neighbourhood");
 const { value: address, errorMessage: addressError } = useField("address");
 const { value: addressTitle, errorMessage: addressTitleError } =
   useField("addressTitle");
 
 const selectCityHandler = (v: number) => {
   selectedCityId.value = v;
+  neighbourhoods.value = [];
+};
+
+const selectDistrictHandler = (v: number) => {
+  selectedDistrictId.value = v;
 };
 
 const fetchDistricts = async (cityId: number) => {
@@ -183,14 +197,45 @@ const fetchDistricts = async (cityId: number) => {
       label: district.name,
     }));
   } catch (error) {
-    console.error("İlçe bilgileri alınamadı:", error);
+    console.error(
+      "An error occurred while fetching district information:",
+      error
+    );
     districts.value = [];
+  }
+};
+
+const fetchNeighbourhoods = async (districtId: number) => {
+  try {
+    const response = await axios.get(
+      `${
+        import.meta.env.VITE_API_BASE_URL
+      }/neighbourhoods/district/${districtId}`
+    );
+    neighbourhoods.value = response.data.map(
+      (neighbourhood: Neighbourhood) => ({
+        value: neighbourhood.id,
+        label: neighbourhood.name,
+      })
+    );
+  } catch (error) {
+    console.error(
+      "An error occurred while fetching neighbourhood information:",
+      error
+    );
+    neighbourhoods.value = [];
   }
 };
 
 watch(selectedCityId, (newCityId) => {
   if (newCityId) {
     fetchDistricts(newCityId);
+  }
+});
+
+watch(selectedDistrictId, (newDistrictId) => {
+  if (newDistrictId) {
+    fetchNeighbourhoods(newDistrictId);
   }
 });
 

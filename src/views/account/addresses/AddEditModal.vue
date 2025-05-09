@@ -136,7 +136,7 @@ interface IProps {
 }
 const props = defineProps<IProps>();
 
-defineEmits(["close"]);
+const emit = defineEmits(["close"]);
 
 interface District {
   id: number;
@@ -239,7 +239,28 @@ watch(selectedDistrictId, (newDistrictId) => {
   }
 });
 
-const submitHandler = form.handleSubmit((values) => {
-  console.log("values:", values);
+const submitHandler = form.handleSubmit(async (values) => {
+  const payload = {
+    name: values.name,
+    surname: values.surname,
+    phone: values.phone,
+    cityId: Number(values.city),
+    districtId: Number(values.district),
+    neighbourhoodId: Number(values.neighbourhood),
+    address: values.address,
+    addressTitle: values.addressTitle,
+  };
+
+  try {
+    const response = await axios.post(
+      `${import.meta.env.VITE_API_BASE_URL}/customer-address`,
+      payload
+    );
+    if (response.data) {
+      emit("close");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+  }
 });
 </script>

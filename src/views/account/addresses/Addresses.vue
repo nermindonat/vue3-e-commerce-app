@@ -23,12 +23,19 @@
           >
             <div class="flex items-start justify-between">
               <div>
-                <h3 class="font-medium text-gray-900">{{ address.title }}</h3>
-                <p class="mt-1 text-sm text-gray-600">{{ address.fullName }}</p>
+                <h3 class="font-medium text-gray-900">
+                  {{ address.addressTitle }}
+                </h3>
+                <div class="flex flex-row items-center">
+                  <p class="mt-1 text-sm text-gray-600">{{ address.name }}</p>
+                  <p class="mt-1 ml-2 text-sm text-gray-600">
+                    {{ address.surname }}
+                  </p>
+                </div>
                 <p class="mt-1 text-sm text-gray-600">{{ address.address }}</p>
                 <p class="mt-1 text-sm text-gray-600">
-                  {{ address.district }}/{{ address.city }}
-                  {{ address.postalCode }}
+                  {{ address.neighbourhood.name }} /
+                  {{ address.district.name }} / {{ address.city.name }}
                 </p>
                 <p class="mt-1 text-sm text-gray-600">{{ address.phone }}</p>
               </div>
@@ -56,6 +63,7 @@
   <AddEditModal
     v-if="showAddEditModal"
     :cities="cities"
+    :addressToEdit="selectedAddress"
     @close="showAddEditModal = false"
   />
 </template>
@@ -67,14 +75,20 @@ import { onMounted, ref } from "vue";
 import { Icon } from "@iconify/vue";
 import { Option } from "../../../types";
 
-interface Address {
+interface LocationInfo {
   id: number;
-  title: string;
-  fullName: string;
+  name: string;
+}
+
+export interface Address {
+  id: number;
+  addressTitle: string;
+  name: string;
+  surname: string;
   address: string;
-  district: string;
-  city: string;
-  postalCode: string;
+  neighbourhood: LocationInfo;
+  district: LocationInfo;
+  city: LocationInfo;
   phone: string;
 }
 
@@ -85,19 +99,19 @@ interface City {
 
 const showAddEditModal = ref(false);
 const cities = ref<Option[]>([]);
+const addresses = ref<Address[]>([]);
+const selectedAddress = ref<Address>();
 
-const addresses = ref<Address[]>([
-  {
-    id: 1,
-    title: "Ev adresim",
-    fullName: "Nermin Donat",
-    address: "Flat 2/1, Block B, Sample Street",
-    district: "Sample District",
-    city: "Sample City",
-    postalCode: "34000",
-    phone: "0555 555 55 55",
-  },
-]);
+const getCustomerAddresses = async () => {
+  try {
+    const response = await axios.get(
+      `${import.meta.env.VITE_API_BASE_URL}/customer-address`
+    );
+    addresses.value = response.data;
+  } catch (error) {
+    console.error("Error fetching customers");
+  }
+};
 
 const fetchCities = async () => {
   const response = await axios.get(
@@ -114,12 +128,16 @@ const openNewAddressModal = () => {
 };
 
 const editAddress = (address: Address) => {
-  console.log("Editing address:", address);
+  selectedAddress.value = address;
+  showAddEditModal.value = true;
 };
 
 const deleteAddress = (addressId: number) => {
   console.log("Deleting address:", addressId);
 };
 
-onMounted(fetchCities);
+onMounted(() => {
+  fetchCities();
+  getCustomerAddresses();
+});
 </script>

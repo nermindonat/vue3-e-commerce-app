@@ -130,9 +130,11 @@ import Select from "../../../components/Select.vue";
 import Textarea from "../../../components/Textarea.vue";
 import { Option } from "../../../types";
 import { ref, watch } from "vue";
+import type { Address } from "./Addresses.vue";
 
 interface IProps {
   cities: Option[];
+  addressToEdit?: Address;
 }
 const props = defineProps<IProps>();
 
@@ -239,6 +241,27 @@ watch(selectedDistrictId, (newDistrictId) => {
   }
 });
 
+watch(
+  () => props.addressToEdit,
+  (newAddress) => {
+    if (newAddress) {
+      name.value = newAddress.name;
+      surname.value = newAddress.surname;
+      phone.value = newAddress.phone;
+      city.value = newAddress.city.id;
+      district.value = newAddress.district.id;
+      neighbourhood.value = newAddress.neighbourhood.id;
+      address.value = newAddress.address;
+      addressTitle.value = newAddress.addressTitle;
+
+      // İlçe ve mahalleleri set etmek için
+      fetchDistricts(newAddress.city.id);
+      fetchNeighbourhoods(newAddress.district.id);
+    }
+  },
+  { immediate: true }
+);
+
 const submitHandler = form.handleSubmit(async (values) => {
   const payload = {
     name: values.name,
@@ -250,7 +273,6 @@ const submitHandler = form.handleSubmit(async (values) => {
     address: values.address,
     addressTitle: values.addressTitle,
   };
-
   try {
     const response = await axios.post(
       `${import.meta.env.VITE_API_BASE_URL}/customer-address`,

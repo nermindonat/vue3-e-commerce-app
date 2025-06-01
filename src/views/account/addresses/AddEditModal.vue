@@ -138,7 +138,7 @@ interface IProps {
 }
 const props = defineProps<IProps>();
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close", "saved"]);
 
 interface District {
   id: number;
@@ -274,12 +274,22 @@ const submitHandler = form.handleSubmit(async (values) => {
     addressTitle: values.addressTitle,
   };
   try {
-    const response = await axios.post(
-      `${import.meta.env.VITE_API_BASE_URL}/customer-address`,
-      payload
-    );
+    let response;
+    if (props.addressToEdit) {
+      const id = props.addressToEdit.id;
+      response = await axios.put(
+        `${import.meta.env.VITE_API_BASE_URL}/customer-address/update/${id}`,
+        payload
+      );
+    } else {
+      response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/customer-address/create`,
+        payload
+      );
+    }
     if (response.data) {
       emit("close");
+      emit("saved");
     }
   } catch (error) {
     console.error("Error:", error);

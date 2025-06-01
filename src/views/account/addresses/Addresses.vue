@@ -65,6 +65,7 @@
     :cities="cities"
     :addressToEdit="selectedAddress"
     @close="showAddEditModal = false"
+    @saved="getCustomerAddresses"
   />
 </template>
 
@@ -136,7 +137,7 @@ const deleteAddress = (addressId: number) => {
   console.log("Deleting address:", addressId);
 };
 
-onMounted(() => {
+onMounted(async () => {
   fetchCities();
   getCustomerAddresses();
 });

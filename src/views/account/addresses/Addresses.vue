@@ -12,7 +12,6 @@
         </button>
       </div>
     </div>
-
     <div class="bg-white shadow rounded-lg">
       <div class="p-6">
         <div class="space-y-4">
@@ -58,6 +57,11 @@
         </div>
       </div>
     </div>
+    <SuccessModal
+      :open="showSuccessModal"
+      message="Adres başarıyla silindi"
+      @close="showSuccessModal = false"
+    />
   </div>
 
   <AddEditModal
@@ -75,6 +79,7 @@ import AddEditModal from "./AddEditModal.vue";
 import { onMounted, ref } from "vue";
 import { Icon } from "@iconify/vue";
 import { Option } from "../../../types";
+import SuccessModal from "../../../components/SuccessModal.vue";
 
 interface LocationInfo {
   id: number;
@@ -99,6 +104,7 @@ interface City {
 }
 
 const showAddEditModal = ref(false);
+const showSuccessModal = ref(false);
 const cities = ref<Option[]>([]);
 const addresses = ref<Address[]>([]);
 const selectedAddress = ref<Address>();
@@ -133,8 +139,18 @@ const editAddress = (address: Address) => {
   showAddEditModal.value = true;
 };
 
-const deleteAddress = (addressId: number) => {
-  console.log("Deleting address:", addressId);
+const deleteAddress = async (addressId: number) => {
+  try {
+    await axios.delete(
+      `${
+        import.meta.env.VITE_API_BASE_URL
+      }/customer-address/delete/${addressId}`
+    );
+    showSuccessModal.value = true;
+    getCustomerAddresses();
+  } catch (error) {
+    console.error("An error occurred while deleting the address:", error);
+  }
 };
 
 onMounted(async () => {
